@@ -1,42 +1,18 @@
 from .beadbag import Beadbag, Drawbag
+from .entity_base_stats import Entity
+from action_mechanics import ActionMechanics
 
-class Character():
+class Character(ActionMechanics):
     def __init__(self, name, defence=2, physical_resistance=0, magical_resistance=0, health=10, draw_count=5):
-        self.name = name
-        self.defence = defence
-        self.physical_resistance = physical_resistance
-        self.magical_resistance = magical_resistance
-        self.health = health
-        self.max_health = health
+        super().__init__(name, defence, physical_resistance, magical_resistance, health)
         self.draw_count = draw_count
-        self.active_effects = []
-
+        
         self.race = None
         self.training = []
 
         self.inventory = []
         self.equipped_items = {}
-
-        self.beadbag = Beadbag()
-        self.drawbag = Drawbag(self.beadbag)
-        self.initialise_starting_beads()
-
-        self.bead_rules = {
-            'white': {'is_success': True, 'effects': []},
-            'black': {'is_success': False, 'effects': []},
-        }
-
-
-    def modify_bead_rule(self, color, is_success=None, add_effects=None):
-        if color not in self.bead_rules:
-            self.bead_rules[color] = {'is_success': False, 'effects': []}
-        if is_success is not None:
-            self.bead_rules[color]['is_success'] = is_success
-        if add_effects:
-            if not isinstance(add_effects, list):
-                add_effects = [add_effects]
-            self.bead_rules[color]['effects'].extend(add_effects)
-        
+      
     def initialise_starting_beads(self, success_count=10, failure_count=10):
         for _ in range(success_count):
             self.beadbag.add_bead('white', 'permanent')
@@ -46,7 +22,10 @@ class Character():
 #Bead Drawing & Action Resolution:
 
     def draw_beads(self, draw_count=None):
-        """Draw beads for an action (uses self.draw_count if not specified)"""
+        if draw_count is None:
+            draw_count = self.draw_count
+        drawn_beads = self.drawbag.draw_bead(amount=draw_count)
+        return drawn_beads
         
     def resolve_action(self, target=None, action_type='attack'):
         """Full action: draw beads, apply effects, determine success/failure"""
