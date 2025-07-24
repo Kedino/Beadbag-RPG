@@ -16,8 +16,7 @@ class Beadbag():
     def list_beads(self):
         return self.beads_in_bag
     
-    def draw_bead(self, amount=5):
-        self.return_drawn_beads()
+    def draw_bead(self, amount=5):        
         if len(self.beads_in_bag) < amount:
             raise ValueError("Not enough beads in the bag to draw.")
         drawn = random.sample(self.beads_in_bag, amount)
