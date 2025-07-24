@@ -1,4 +1,4 @@
-from .beadbag import Beadbag
+from .beadbag import Beadbag, Drawbag
 
 class Character():
     def __init__(self, name, defence=2, physical_resistance=0, magical_resistance=0, health=10, draw_count=5):
@@ -17,7 +17,8 @@ class Character():
         self.inventory = []
         self.equipped_items = {}
 
-        self.beadbag = BeadBag()
+        self.beadbag = Beadbag()
+        self.drawbag = Drawbag(self.beadbag)
         self.initialise_starting_beads()
 
         self.bead_rules = {
@@ -44,14 +45,19 @@ class Character():
         
 #Bead Drawing & Action Resolution:
 
-    def draw_beads(self, count=None):
+    def draw_beads(self, draw_count=None):
         """Draw beads for an action (uses self.draw_count if not specified)"""
         
     def resolve_action(self, target=None, action_type='attack'):
         """Full action: draw beads, apply effects, determine success/failure"""
         
-    def count_successes(self, drawn_beads):
-        """Count successes based on bead_rules"""
+    def count_successes(self):
+        count = 0
+        for bead in self.drawbag.beads_in_bag:
+            rule = self.bead_rules.get(bead['color'], {})
+            if rule.get('is_success'):
+                count += 1
+        return count
         
     def apply_bead_effects(self, drawn_beads):
         """Process all the effects from drawn beads"""
