@@ -3,9 +3,8 @@ from .entity_base_stats import Entity
 from action_mechanics import ActionMechanics
 
 class Character(ActionMechanics):
-    def __init__(self, name, defence=2, physical_resistance=0, magical_resistance=0, health=10, draw_count=5):
-        super().__init__(name, defence, physical_resistance, magical_resistance, health)
-        self.draw_count = draw_count
+    def __init__(self, name, defence=None, physical_resistance=None, magical_resistance=None, health=None, draw_count=None, mana_retention=None):
+        super().__init__(name, defence, physical_resistance, magical_resistance, health, draw_count, mana_retention)
         
         self.race = None
         self.training = []

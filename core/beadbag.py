@@ -60,7 +60,6 @@ class Drawbag(Beadbag):
         for bead in drawn:
             self.parent.remove_bead(bead)
             self.beads_in_bag.append(bead)
-        return self.beads_in_bag
 
     def return_bead(self, bead):
         if bead in self.beads_in_bag:
