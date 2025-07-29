@@ -18,49 +18,6 @@ class Character(ActionMechanics):
         for _ in range(failure_count):
             self.beadbag.add_bead('black', 'permanent')
         
-#Bead Drawing & Action Resolution:
-
-    def draw_beads(self, draw_count=None):
-        if draw_count is None:
-            draw_count = self.draw_count
-        drawn_beads = self.drawbag.draw_bead(amount=draw_count)
-        return drawn_beads
-        
-    def resolve_action(self, target=None, action_type='attack'):
-        """Full action: draw beads, apply effects, determine success/failure"""
-        
-    def count_successes(self):
-        count = 0
-        for bead in self.drawbag.beads_in_bag:
-            rule = self.bead_rules.get(bead['color'], {})
-            if rule.get('is_success'):
-                count += 1
-        return count
-        
-    def apply_bead_effects(self, drawn_beads):
-        """Process all the effects from drawn beads"""
-
-#Health & Damage:
-
-    def take_damage(self, amount, damage_type='physical'):
-        """Apply damage with armor reduction"""
-        
-    def heal(self, amount):
-        """Restore health (capped at max_health)"""
-        
-    def is_alive(self):
-        """Check if character is still alive"""
-
-#Effects Management:
-
-    def add_effect(self, effect):
-        """Add temporary effect"""
-        
-    def remove_effect(self, effect_name):
-        """Remove specific effect"""
-        
-    def process_effects(self):
-        """Apply all active effects (call each turn)"""
 
 #Equipment & Progression:
 

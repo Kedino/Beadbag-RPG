@@ -3,8 +3,6 @@ from beadbag import Beadbag, Drawbag
 from core.bead_effects import EFFECT_MAP
 
 
-
-
 class ActionMechanics(Entity):
     def __init__(self, name, defence=2, physical_resistance=None, magical_resistance=None, health=None, mana_retention=None, draw_count=5):
         super().__init__(name, defence, physical_resistance, magical_resistance, health)
