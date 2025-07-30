@@ -8,6 +8,8 @@ class ActionMechanics(Entity):
         super().__init__(name, defence, physical_resistance, magical_resistance, health)
         self.mana_retention = mana_retention if mana_retention is not None else 0
         self.mana = 0
+        self.damage = 1
+        self.current_successes = 0
 
         self.draw_count = draw_count
         
@@ -37,6 +39,34 @@ class ActionMechanics(Entity):
             self.beadbag.add_bead('white', 'permanent')
         for _ in range(failure_count):
             self.beadbag.add_bead('black', 'permanent')
+
+    def primary_action(self, target):
+        self.initial_draw()
+        self.draw_interaction()
+        self.action_resolution(target)
+        self.drawbag.resolve_draw(clear_persist=False)
+
+    def initial_draw(self):
+        self.drawbag.draw_bead(amount=self.draw_count)
+        for bead in self.drawbag.beads_in_bag:
+            self.apply_resource_effect(bead)
+        
+    def draw_interaction(self):
+        pass
+
+    def action_resolution(self, target):
+        self.current_successes = self.count_successes()
+        for bead in self.drawbag.beads_in_bag:
+            self.apply_bead_effect(bead)
+        if self.current_successes > target.base_defence:
+            self.resolve_hit(target)
+        
+        
+    def resolve_hit(self, target):
+        damage = self.damage - target.physical_resistance
+        if damage < 0:
+            damage = 0
+        target.lose_health(damage)
         
     def draw_beads(self, draw_count=None):
         if draw_count is None:
@@ -51,23 +81,21 @@ class ActionMechanics(Entity):
                 count += 1
         return count
     
-    def apply_resource_effects(self):
-        for bead in self.drawbag.beads_in_bag:
-            rule = self.bead_rules.get(bead['color'], {})
-            resource = rule.get('resource', None)
-            if resource:
-                add_method = getattr(self, f'gain_{resource}', None)
-                if callable(add_method):
-                    add_method(1)
+    def apply_resource_effect(self, bead):
+        rule = self.bead_rules.get(bead['color'], {})
+        resource = rule.get('resource', None)
+        if resource:
+            add_method = getattr(self, f'gain_{resource}', None)
+            if callable(add_method):
+                add_method(1)
 
-    def apply_bead_effects(self):
-        for bead in self.drawbag.beads_in_bag:
-            rule = self.bead_rules.get(bead['color'], {})
-            effects = rule.get('effects', [])
-            for effect in effects:
-                effect_func = EFFECT_MAP.get(effect)
-                if callable(effect_func):
-                    effect_func(self)
+    def apply_bead_effect(self, bead):
+        rule = self.bead_rules.get(bead['color'], {})
+        effects = rule.get('effects', [])
+        for effect in effects:
+            effect_func = EFFECT_MAP.get(effect)
+            if callable(effect_func):
+                effect_func(self)
 
     def gain_mana(self, amount):
         self.mana += amount
