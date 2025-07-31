@@ -6,12 +6,28 @@ class Entity():
         self.base_defence = defence
         self.base_physical_resistance = physical_resistance
         self.base_magical_resistance = magical_resistance
-        self.health = health
-        self.max_health = health
+        self.current_health = health
+        self.base_max_health = health
         self.active_effects = []
 
+    @property
+    def effective_defence(self):
+        return self.base_defence
+    
+    @property
+    def effective_physical_resistance(self):
+        return self.base_physical_resistance
+    
+    @property
+    def effective_magical_resistance(self):
+        return self.base_magical_resistance 
+    
+    @property
+    def effective_max_health(self):
+        return self.base_max_health
+
     def change_health(self, amount):
-        self.health = max(0, min(self.max_health, self.health + amount))
+        self.current_health = max(0, min(self.effective_max_health, self.current_health + amount))
 
     def gain_health(self, amount):
         self.change_health(abs(amount))
@@ -19,11 +35,11 @@ class Entity():
         self.change_health(-abs(amount))
 
     def increase_max_health(self, amount):
-        self.max_health += amount
+        self.base_max_health += amount
     def decrease_max_health(self, amount):
-        self.max_health = max(0, self.max_health - amount)
-        if self.health > self.max_health:
-            self.health = self.max_health
+        self.base_max_health = max(0, self.base_max_health - amount)
+        if self.current_health > self.base_max_health:
+            self.current_health = self.base_max_health
     
     def gain_physical_resistance(self, amount):
         self.base_physical_resistance += amount
@@ -47,7 +63,17 @@ class Entity():
         self.base_defence = max(0, self.base_defence - amount)
 
     def is_alive(self):
-        return self.health > 0
-
+        return self.current_health > 0
+    
+    def __repr__(self):
+        parts = [
+            self.name,
+            f"(HP: {self.current_health}/{self.effective_max_health})",
+            f"[Def: {self.effective_defence}, P.Res: {self.effective_physical_resistance}, M.Res: {self.effective_magical_resistance}]"
+        ]
+        if self.active_effects:
+            #Here we will later add code to represent active effects
+            pass
+        return " | ".join(parts)
 
     
