@@ -1,8 +1,9 @@
 from .beadbag import Beadbag, Drawbag
 from .entity_base_stats import Entity
-from action_mechanics import ActionMechanics
+from actor import Actor
+from core.bead_effects import EFFECT_MAP
 
-class Character(ActionMechanics):
+class Character(Actor):
     def __init__(self, name, defence=None, physical_resistance=None, magical_resistance=None, health=None, draw_count=None, mana_retention=None):
         super().__init__(name, defence, physical_resistance, magical_resistance, health, draw_count, mana_retention)
         
