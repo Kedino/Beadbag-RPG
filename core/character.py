@@ -1,6 +1,6 @@
 from .beadbag import Beadbag, Drawbag
 from .entity_base_stats import Entity
-from actor import Actor
+from .actor import Actor
 from core.bead_effects import EFFECT_MAP
 
 class Character(Actor):
