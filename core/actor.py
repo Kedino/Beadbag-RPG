@@ -7,7 +7,7 @@ class Actor(Entity):
     def __init__(self, name, defence=2, physical_resistance=None, magical_resistance=None, health=None, mana_retention=None, draw_count=5):
         super().__init__(name, defence, physical_resistance, magical_resistance, health)
         self.mana_retention = mana_retention if mana_retention is not None else 0
-        self.mana = 0
+        self.current_mana = 0
         self.damage = 1
         self.current_successes = 0
 
@@ -21,6 +21,18 @@ class Actor(Entity):
             'white': {'is_success': True, 'resource': None, 'effects': []},
             'black': {'is_success': False, 'resource': None, 'effects': []},
         }
+    
+    @property
+    def effective_mana_retention(self):
+        return self.mana_retention
+
+    @property
+    def effective_damage(self):
+        return self.damage
+    
+    @property
+    def effective_draw_count(self):
+        return self.draw_count
 
     def modify_bead_rule(self, color, is_success=None, resource=None, add_effects=None):
         if color not in self.bead_rules:
@@ -103,4 +115,16 @@ class Actor(Entity):
     def reset_mana(self):
         self.mana = min(self.mana, self.mana_retention)
 
-   
+    def __repr__(self):
+        parts = [
+            self.name,
+            f"(HP: {self.current_health}/{self.effective_max_health})",
+            f"[Def: {self.effective_defence}, P.Res: {self.effective_physical_resistance}, M.Res: {self.effective_magical_resistance}]",
+            f"Mana: {self.current_mana}",
+            f"Draw Count: +{self.effective_draw_count}",
+            f"Damage: {self.effective_damage}",
+        ]
+        if self.active_effects:
+            #Here we will later add code to represent active effects
+            pass
+        return " | ".join(parts)   
