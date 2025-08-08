@@ -1,3 +1,5 @@
+# core/beadbag.py
+
 import random 
 
 class Beadbag():

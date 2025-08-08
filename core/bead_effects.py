@@ -1,4 +1,4 @@
-
+# core/bead_effects.py
 
 def bead_effect_degen(entity, amount=1):
     entity.lose_health(amount)

@@ -1,4 +1,6 @@
-from .entity_base_stats import Entity
+# core/actor.py
+
+from .entity import Entity
 from .beadbag import Beadbag, Drawbag
 from core.bead_effects import EFFECT_MAP
 

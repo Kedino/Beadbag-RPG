@@ -1,4 +1,6 @@
-from core.entity_base_stats import Entity
+# tests/class_tests.py
+
+from core.entity import Entity
 from core.beadbag import Beadbag, Drawbag
 from core.bead_effects import EFFECT_MAP
 from core.actor import Actor

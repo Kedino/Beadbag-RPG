@@ -1,4 +1,4 @@
-
+# core/entity.py
 
 class Entity():
     def __init__(self, name, defence=1, physical_resistance=0, magical_resistance=0, health=10):
