@@ -15,6 +15,16 @@ class Beadbag():
     def list_beads(self):
         return self.beads_in_bag
     
+    def get_bead_summary(self):
+        # This method returns a dictionary with counts of each bead type, rather than a list of individual beads.
+        summary = {}
+        for bead in self.beads_in_bag:
+            bead_type = (bead['color'], bead['permanence'])
+            if bead_type not in summary:
+                summary[bead_type] = 0
+            summary[bead_type] += 1
+        return summary
+    
     def should_be_removed(self, bead, clear_persist=False):
         if bead['permanence'] == 'temporary':
             return True
@@ -22,31 +32,6 @@ class Beadbag():
             return True
         return False        
         
-    #def draw_bead(self, amount=5):        
-    #    if len(self.beads_in_bag) < amount:
-    #        raise ValueError("Not enough beads in the bag to draw.")
-    #    drawn = random.sample(self.beads_in_bag, amount)
-    #    for bead in drawn:
-    #        self.beads_in_bag.remove(bead)
-    #    self.drawn_beads.extend(drawn)
-    #    return self.drawn_beads
-    
-    #def return_drawn_beads(self):
-    #    self.beads_in_bag.extend(self.drawn_beads)
-    #    self.drawn_beads.clear()
-
-    #def cleanup_bag(self, clear_persist=False):
-    #    new_bag_content = []
-    #    for bead in self.beads_in_bag:            
-    #        if bead["permanence"] == 'permanent':
-    #            new_bag_content.append(bead)
-    #        elif bead["permanence"] == 'persistent' and not clear_persist:
-    #            new_bag_content.append(bead)
-    #        else:
-    #            continue
-    #    self.beads_in_bag = new_bag_content
-
-
 
 class Drawbag(Beadbag):
     def __init__(self, parent):

@@ -121,7 +121,7 @@ class Actor(Entity):
             f"(HP: {self.current_health}/{self.effective_max_health})",
             f"[Def: {self.effective_defence}, P.Res: {self.effective_physical_resistance}, M.Res: {self.effective_magical_resistance}]",
             f"Mana: {self.current_mana}",
-            f"Draw Count: +{self.effective_draw_count}",
+            f"Draw Count: {self.effective_draw_count}",
             f"Damage: {self.effective_damage}",
         ]
         if self.active_effects:
