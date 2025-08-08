@@ -3,10 +3,43 @@ from core.beadbag import Beadbag, Drawbag
 from core.bead_effects import EFFECT_MAP
 from core.actor import Actor
 from core.character import Character
+from .test_config import TEST_CONFIG
 
-test_cases = [
-    {
-        "Test": "Entity creation and __repr__",
+
+# =======================================================================
+#                           TEST CASE MANUAL
+# =======================================================================
+# Each key in ALL_TESTS is a test name. Its value is a dictionary
+# that defines the test.
+#
+# --- Optional Keys ---
+# "status": Use this key to mark a test with a special status.
+#           - "incomplete": The test will be skipped with an INFO message.
+#           - If the "status" key is omitted, the test is considered
+#             normal and active.
+#
+# --- Test Types ---
+# 1. Creation Test: Checks __repr__ after creating an object.
+#    Requires keys: "Class", "test_args", "Expected Output"
+#
+# 2. Action Test: Performs actions on an object and checks its state.
+#    Requires keys: "Class", "creation_args", "action_tests"
+#
+# 3. Function Test: Tests a simple, stateless method.
+#    Requires keys: "Class", "function_tests"
+#
+# --- Test selection ---
+# Tests are selected basedin the TEST_CONFIG dictionary, located in test_config.py
+# Tests that are set to False in TEST_CONFIG will be skipped.
+# Tests that are set to True will be executed.
+# If a test is not present in TEST_CONFIG, it will be skipped.
+# The TEST_CONFIG dictionary is updated by the update_test_config.py script.
+# 
+# =======================================================================
+
+
+ALL_TESTS = {
+    "Entity creation and __repr__": {
         "Class": Entity,
         "test_args": [
             ("Tree", 1, 1, 0, 10),
@@ -18,10 +51,8 @@ test_cases = [
             ("Iron door | (HP: 20/20) | [Def: 2, P.Res: 3, M.Res: 1]"),
             ("Apple | (HP: 1/1) | [Def: 3, P.Res: 0, M.Res: 0]")
         ],            
-        "run": False # Set to True to run this test
     },
-    {
-        "Test": "Actor creation and __repr__",
+    "Actor creation and __repr__": {
         "Class": Actor,
         "test_args": [
             ("Black Bear", 5, 1, 1, 30, 0, 6),
@@ -31,21 +62,14 @@ test_cases = [
             ("Black Bear | (HP: 30/30) | [Def: 5, P.Res: 1, M.Res: 1] | Mana: 0 | Draw Count: 6 | Damage: 1"),
             ("Goblin | (HP: 8/8) | [Def: 3, P.Res: 0, M.Res: 0] | Mana: 0 | Draw Count: 5 | Damage: 1")
         ],
-        "run": True # Set to True to run this test
     },
-    {
-        "Test": "Character creation and __repr__",
+    "Character creation and __repr__": {
+        "status": "incomplete",
         "Class": Character,
-        "test_args": [
-            ("")
-        ],
-        "Expected Output": [
-            ("")
-        ],
-        "run": False # Set to True to run this test
+        "test_args": [],
+        "Expected Output": [],
     },
-    {
-        "Test": "Beadbag methods",
+    "Beadbag methods": {
         "Class": Beadbag,
         "Creation_args": (),
         "Action_tests": [
@@ -74,10 +98,8 @@ test_cases = [
                 "expected_state": [{'color': 'black', 'permanence': 'temporary'}],
             }
         ],
-        "run": True # Set to True to run this test
     },
-    {
-        "Test": "Beadbag should_be_removed logic",
+    "Beadbag should_be_removed logic": {
         "Class": Beadbag, 
         "function_tests": [
             {
@@ -115,21 +137,25 @@ test_cases = [
                 "expected_result": False
             },
         ],
-        "run": True # Set to True to run this test
     }
-]
+}
 
 def run_tests():
     total_tests = 0
     passed_tests = 0
 
-    for test_group in test_cases:
-        if not test_group.get("run", True): 
-            print(f"--- Skipping {test_group['Test']} ---")
+    for test_name, test_group in ALL_TESTS.items():
+        if test_group.get("status") == "incomplete":
+            print(f"--- INFO: Skipping incomplete test: {test_name} ---")
+            print()
+            continue
+
+        if not TEST_CONFIG.get(test_name, False):
+            print(f"--- Skipping {test_name} ---")
             print()
             continue 
 
-        print(f"--- Testing {test_group['Test']} ---")
+        print(f"--- Testing {test_name} ---")
 
         class_to_test = test_group["Class"]
         if "Expected Output" in test_group:
