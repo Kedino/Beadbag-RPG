@@ -8,7 +8,7 @@ RACES = {
         "starting_beads": [("Gold", "permanent"), ("Purple", "permanent")],
         "bead_rules": {
             'gold': {'is_success': True, 'resource': None, 'effects': ['critical_success']},
-            'purple': {'is_success': False, 'resource': None, 'effects': ['critical_failure']},
+            'grey': {'is_success': False, 'resource': None, 'effects': ['critical_failure']},
             },
         },
     "elf": {
@@ -26,7 +26,7 @@ RACES = {
         "stats_modifiers": {},
         "starting_beads": [("Slate", "permanent"), ("Slate", "permanent")],
         "bead_rules": {
-            'slate': {'is_success': False, 'resource': None, 'effects': ['resilience']},
+            'brown': {'is_success': False, 'resource': None, 'effects': ['resilience']},
             },
         },
 }   

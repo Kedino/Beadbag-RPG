@@ -3,6 +3,7 @@
 from .entity import Entity
 from .beadbag import Beadbag, Drawbag
 from core.bead_effects import EFFECT_MAP
+from .data.default_bead_definitions import BEAD_DEFINITIONS
 
 
 class Actor(Entity):
@@ -20,8 +21,8 @@ class Actor(Entity):
         self.initialise_starting_beads()
 
         self.bead_rules = {
-            'white': {'is_success': True, 'resource': None, 'effects': []},
-            'black': {'is_success': False, 'resource': None, 'effects': []},
+            'white': {'is_success': True, 'resource': None, 'effects': [], "event": None},
+            'black': {'is_success': False, 'resource': None, 'effects': []}, "event": None,
         }
     
     @property
@@ -38,7 +39,7 @@ class Actor(Entity):
 
     def modify_bead_rule(self, color, is_success=None, resource=None, add_effects=None):
         if color not in self.bead_rules:
-            self.bead_rules[color] = {'is_success': False, 'resource': None, 'effects': []}
+            self.bead_rules[color] = {'is_success': False, 'resource': None, 'effects': [], "event": None}
         if is_success is not None:
             self.bead_rules[color]['is_success'] = is_success
         if resource is not None:
@@ -47,6 +48,7 @@ class Actor(Entity):
             if not isinstance(add_effects, list):
                 add_effects = [add_effects]
             self.bead_rules[color]['effects'].extend(add_effects)
+
         
     def initialise_starting_beads(self, success_count=12, failure_count=8):
         for _ in range(success_count):
@@ -57,6 +59,7 @@ class Actor(Entity):
     def primary_action(self, target):
         self.initial_draw()
         self.draw_interaction()
+        self.resolve_events()
         self.action_resolution(target)
         self.drawbag.resolve_draw(clear_persist=False)
 
@@ -66,7 +69,16 @@ class Actor(Entity):
             self.apply_resource_effect(bead)
         
     def draw_interaction(self):
+        #Here we will later add code to handle player interactions
         pass
+
+    def resolve_events(self):
+        for bead in self.drawbag.beads_in_bag:
+            rule = self.get_bead_rules(bead)
+            event= rule.get('event', None)
+            if event is True:
+                # Here we would handle any events associated with the bead
+                pass
 
     def action_resolution(self, target):
         self.current_successes = self.count_successes()
@@ -90,13 +102,19 @@ class Actor(Entity):
     def count_successes(self):
         count = 0
         for bead in self.drawbag.beads_in_bag:
-            rule = self.bead_rules.get(bead['color'], {})
+            rule = self.get_bead_rules(bead)
             if rule.get('is_success'):
                 count += 1
         return count
     
+    def get_bead_rules(self, bead):
+        if bead["color"] in self.bead_rules:
+            return self.bead_rules[bead["color"]]
+        else:
+            return BEAD_DEFINITIONS.get(bead["color"], {})
+       
     def apply_resource_effect(self, bead):
-        rule = self.bead_rules.get(bead['color'], {})
+        rule = self.get_bead_rules(bead)
         resource = rule.get('resource', None)
         if resource:
             add_method = getattr(self, f'gain_{resource}', None)
@@ -104,7 +122,7 @@ class Actor(Entity):
                 add_method(1)
 
     def apply_bead_effect(self, bead):
-        rule = self.bead_rules.get(bead['color'], {})
+        rule = self.get_bead_rules(bead)
         effects = rule.get('effects', [])
         for effect in effects:
             effect_func = EFFECT_MAP.get(effect)
