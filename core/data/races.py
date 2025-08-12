@@ -24,7 +24,7 @@ RACES = {
         "name": "Dwarf",
         "description": "Sturdy and resilient, dwarves can take a beating and keep going.",
         "stats_modifiers": {},
-        "starting_beads": [("Slate", "permanent"), ("Slate", "permanent")],
+        "starting_beads": [("Brown", "permanent"), ("Brown", "permanent")],
         "bead_rules": {
             'brown': {'is_success': False, 'resource': None, 'effects': ['resilience']},
             },

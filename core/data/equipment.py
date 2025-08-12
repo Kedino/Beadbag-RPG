@@ -1,0 +1,147 @@
+# core/data/equipment.py
+
+WEAPONS = {
+    "short_sword": {
+        "name": "Short Sword",
+        "type": "one_handed weapon",
+        "description": "A balanced one-handed sword, ideal for quick strikes.",
+        "modifiers": {"damage": 2,
+                      "draws": 1,
+        },
+        "maneuvers": ["parry"],
+        "on_hit_effects": ["slash"],
+    },
+    "hand_axe": {
+        "name": "Hand Axe",
+        "type": "one_handed weapon",
+        "description": "A versatile one-handed axe, effective in close combat.",
+        "modifiers": {"damage": 2,
+                      "draws": 1,
+        }
+        "maneuvers": [],
+        "on_hit_effects": ["bleed"],
+    },
+    "warhammer": {
+        "name": "Warhammer",
+        "type": "one_handed weapon",
+        "description": "A heavy one-handed hammer designed to crush armor.",
+        "modifiers": {"damage": 2,
+                      "draws": 1,
+        }
+        "maneuvers": [],
+        "on_hit_effects": ["stun"],
+    },    
+    "war pick": {
+        "name": "War Pick",
+        "type": "one_handed weapon",
+        "description": "A one-handed weapon designed to penetrate armor.",
+        "modifiers": {"damage": 2,
+                      "draws": 1,
+        }
+        "maneuvers": [],
+        "on_hit_effects": ["pierce"],
+    },
+    "dagger": {
+        "name": "Dagger",
+        "type": "off_hand weapon",
+        "description": "A small, easily concealed weapon for quick strikes.",
+        "modifiers": {"damage": 1,
+                      "draws": 1,
+        }
+        "maneuvers": ["parry","riposte"],
+        "on_hit_effects": [],
+    },
+    "two handed sword": {
+        "name": "Two-Handed Sword",
+        "type": "two_handed weapon",
+        "description": "A powerful sword that requires both hands to wield effectively.",
+        "modifiers": {"damage": 3,
+                      "draws": 2,
+        }
+        "maneuvers": ["cleave"],
+        "on_hit_effects": ["slash", "heavy_blow"],
+    },
+    "two handed axe": {
+        "name": "Two-Handed Axe",
+        "type": "two_handed weapon",
+        "description": "A heavy axe that delivers devastating blows.",
+        "modifiers": {"damage": 3,
+                      "draws": 2,
+        }
+        "maneuvers": ["cleave"],
+        "on_hit_effects": ["bleed", "heavy_blow"],
+    },
+    "two handed hammer": {
+        "name": "Two-Handed Hammer",
+        "type": "two_handed weapon",
+        "description": "A massive hammer that can crush armor and bone.",
+        "modifiers": {"damage": 3,
+                      "draws": 2,
+        }
+        "maneuvers": [],
+        "on_hit_effects": ["knockback", "stun", "heavy_blow"],
+    },
+}
+
+ARMOUR = {
+    "light_shield": {
+        "name": "Light Shield",
+        "type": "shield",
+        "description": "A small shield that provides basic protection.",
+        "modifiers": {"defence": 1,
+                      "physical_resistance": 1,
+                      "magical_resistance": 0,
+        },
+        "maneuvers": ["block"],
+    },
+    "heavy_shield": {
+        "name": "Heavy Shield",
+        "type": "shield",
+        "description": "A large shield that offers superior protection.",
+        "modifiers": {"defence": 1,
+                      "physical_resistance": 1,
+                      "magical_resistance": 0,
+        },
+        "maneuvers": ["brace"],
+    },
+    "light_armour": {
+        "name": "Light Armour",
+        "type": "armour",
+        "description": "Provides basic protection without hindering mobility.",
+        "modifiers": {"defence": 2,
+                      "physical_resistance": 0,
+                      "magical_resistance": 0,
+        },
+        "maneuvers": ["dodge"],
+    },
+    "medium_armour": {
+        "name": "Medium Armour",
+        "type": "armour",
+        "description": "Offers a balance between protection and mobility.",
+        "modifiers": {"defence": 1,
+                      "physical_resistance": 1,
+                      "magical_resistance": 0,
+        },
+        "maneuvers": [],
+    },
+    "heavy_armour": {
+        "name": "Heavy Armour",
+        "type": "armour",
+        "description": "Provides maximum protection but limits mobility.",
+        "modifiers": {"defence": 0,
+                      "physical_resistance": 2,
+                      "magical_resistance": 0,
+        },
+        "maneuvers": ["bulwark"], #or "fortify"?
+    },
+    "scholars_robes": {
+        "name": "Scholar's Robes",
+        "type": "armour",
+        "description": "Light robes that provide minimal protection but enhance magical defences.",
+        "modifiers": {"defence": 1,
+                      "physical_resistance": 0,
+                      "magical_resistance": 2,
+        },
+        "maneuvers": ["dodge", "channel"],
+    },    
+}

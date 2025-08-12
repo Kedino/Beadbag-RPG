@@ -7,7 +7,7 @@ from .data.default_bead_definitions import BEAD_DEFINITIONS
 
 
 class Actor(Entity):
-    def __init__(self, name, defence=2, physical_resistance=None, magical_resistance=None, health=None, mana_retention=None, draw_count=5):
+    def __init__(self, name, defence=1, physical_resistance=None, magical_resistance=None, health=None, mana_retention=None, draw_count=5):
         super().__init__(name, defence, physical_resistance, magical_resistance, health)
         self.mana_retention = mana_retention if mana_retention is not None else 0
         self.current_mana = 0
@@ -24,6 +24,8 @@ class Actor(Entity):
             'white': {'is_success': True, 'resource': None, 'effects': [], "event": None},
             'black': {'is_success': False, 'resource': None, 'effects': []}, "event": None,
         }
+
+        self.event_queue = []
     
     @property
     def effective_mana_retention(self):
@@ -69,14 +71,17 @@ class Actor(Entity):
             self.apply_resource_effect(bead)
         
     def draw_interaction(self):
-        #Here we will later add code to handle player interactions
+        # Here we will later add code to handle player interactions
         pass
 
     def resolve_events(self):
         for bead in self.drawbag.beads_in_bag:
             rule = self.get_bead_rules(bead)
-            event= rule.get('event', None)
-            if event is True:
+            is_event= rule.get('event', None)
+            if is_event is True:
+                if len(self.event_queue) == 0:
+                    continue
+                event = self.event_queue.pop(0)
                 # Here we would handle any events associated with the bead
                 pass
 
