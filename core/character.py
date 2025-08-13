@@ -21,7 +21,11 @@ class Character(Actor):
         self.training = []
 
         self.inventory = []
-        self.equipped_items = {}
+        self.equipped_items = {"main_hand": None,
+                               "off_hand": None,
+                               "armour": None,
+        }
+
       
     def initialise_starting_beads(self, success_count=10, failure_count=10):
         for _ in range(success_count):
@@ -32,8 +36,29 @@ class Character(Actor):
 
 #Equipment & Progression:
 
-    def equip_item(self, item, slot):
-        """Equip an item to a slot"""
+    def unequip_item(self, item):
+        slots_to_clear = item.get("slot") if isinstance(item, dict) else getattr(item, "slot", None)
+        if not slots_to_clear:
+            return False
+        for slot in slots_to_clear:
+            self.equipped_items[slot] = None
+        self.add_to_inventory(item)
+        return True
+
+    def equip_item(self, item):
+        if item not in self.inventory:
+            return False
+        slots = item.get("slot") if isinstance(item, dict) else getattr(item, "slot", None)
+        if not slots or not isinstance(slots, list):
+            return False
+        for slot in slots:
+            currently_equipped = self.equipped_items.get(slot)
+            if currently_equipped:
+               self.unequip_item(currently_equipped)
+            self.equipped_items[slot] = item
+        self.remove_from_inventory(item)
+        return True
+        
         
     def add_to_inventory(self, item):
         self.inventory.append(item)
