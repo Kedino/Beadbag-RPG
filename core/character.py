@@ -36,7 +36,25 @@ class Character(Actor):
         """Equip an item to a slot"""
         
     def add_to_inventory(self, item):
-        """Add item to inventory"""
+        self.inventory.append(item)
+
+    def remove_from_inventory(self, item):
+        if item in self.inventory:
+            self.inventory.remove(item)
+            return True
+        return False
+    
+    def has_item(self, item):
+        return item in self.inventory
+    
+    def list_items(self, type=None):
+        if type is None:
+            return list(self.inventory)
+        return [
+            item for item in self.inventory 
+            if getattr(item, "type", None) == type 
+            or (isinstance(item, dict) and item.get("type", None) == type)
+            ]
         
     def add_training(self, skill):
         """Learn new skill/training"""

@@ -15,7 +15,7 @@ class Beadbag():
             self.beads_in_bag.remove(bead)
 
     def list_beads(self):
-        return self.beads_in_bag
+        return list(self.beads_in_bag)
     
     def get_bead_summary(self):
         # This method returns a dictionary with counts of each bead type, rather than a list of individual beads.
