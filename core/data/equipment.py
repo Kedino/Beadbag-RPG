@@ -4,6 +4,7 @@ WEAPONS = {
     "short_sword": {
         "name": "Short Sword",
         "type": "one_handed_weapon",
+        "slot": ["main_hand"],
         "description": "A balanced one-handed sword, ideal for quick strikes.",
         "modifiers": {"damage": 2,
                       "draws": 1,
@@ -14,6 +15,7 @@ WEAPONS = {
     "hand_axe": {
         "name": "Hand Axe",
         "type": "one_handed_weapon",
+        "slot": ["main_hand"],
         "description": "A versatile one-handed axe, effective in close combat.",
         "modifiers": {"damage": 2,
                       "draws": 1,
@@ -24,6 +26,7 @@ WEAPONS = {
     "warhammer": {
         "name": "Warhammer",
         "type": "one_handed_weapon",
+        "slot": ["main_hand"],
         "description": "A heavy one-handed hammer designed to crush armor.",
         "modifiers": {"damage": 2,
                       "draws": 1,
@@ -34,6 +37,7 @@ WEAPONS = {
     "war pick": {
         "name": "War Pick",
         "type": "one_handed_weapon",
+        "slot": ["main_hand"],
         "description": "A one-handed weapon designed to penetrate armor.",
         "modifiers": {"damage": 2,
                       "draws": 1,
@@ -44,6 +48,7 @@ WEAPONS = {
     "dagger": {
         "name": "Dagger",
         "type": "off_hand_weapon",
+        "slot": ["off_hand"],
         "description": "A small, easily concealed weapon for quick strikes.",
         "modifiers": {"damage": 1,
                       "draws": 1,
@@ -54,6 +59,7 @@ WEAPONS = {
     "two handed sword": {
         "name": "Two-Handed Sword",
         "type": "two_handed_weapon",
+        "slot": ["main_hand", "off_hand"],
         "description": "A powerful sword that requires both hands to wield effectively.",
         "modifiers": {"damage": 3,
                       "draws": 2,
@@ -64,6 +70,7 @@ WEAPONS = {
     "two handed axe": {
         "name": "Two-Handed Axe",
         "type": "two_handed_weapon",
+        "slot": ["main_hand", "off_hand"],
         "description": "A heavy axe that delivers devastating blows.",
         "modifiers": {"damage": 3,
                       "draws": 2,
@@ -74,6 +81,7 @@ WEAPONS = {
     "two handed hammer": {
         "name": "Two-Handed Hammer",
         "type": "two_handed_weapon",
+        "slot": ["main_hand", "off_hand"],
         "description": "A massive hammer that can crush armor and bone.",
         "modifiers": {"damage": 3,
                       "draws": 2,
@@ -87,6 +95,7 @@ ARMOUR = {
     "light_shield": {
         "name": "Light Shield",
         "type": "shield",
+        "slot": ["off_hand"],
         "description": "A small shield that provides basic protection.",
         "modifiers": {"defence": 1,
                       "physical_resistance": 1,
@@ -97,6 +106,7 @@ ARMOUR = {
     "heavy_shield": {
         "name": "Heavy Shield",
         "type": "shield",
+        "slot": ["off_hand"],
         "description": "A large shield that offers superior protection.",
         "modifiers": {"defence": 1,
                       "physical_resistance": 1,
@@ -107,6 +117,7 @@ ARMOUR = {
     "light_armour": {
         "name": "Light Armour",
         "type": "armour",
+        "slot": ["armour"],
         "description": "Provides basic protection without hindering mobility.",
         "modifiers": {"defence": 2,
                       "physical_resistance": 0,
@@ -117,6 +128,7 @@ ARMOUR = {
     "medium_armour": {
         "name": "Medium Armour",
         "type": "armour",
+        "slot": ["armour"],
         "description": "Offers a balance between protection and mobility.",
         "modifiers": {"defence": 1,
                       "physical_resistance": 1,
@@ -127,6 +139,7 @@ ARMOUR = {
     "heavy_armour": {
         "name": "Heavy Armour",
         "type": "armour",
+        "slot": ["armour"],
         "description": "Provides maximum protection but limits mobility.",
         "modifiers": {"defence": 0,
                       "physical_resistance": 2,
@@ -137,6 +150,7 @@ ARMOUR = {
     "scholars_robes": {
         "name": "Scholar's Robes",
         "type": "armour",
+        "slot": ["armour"],
         "description": "Light robes that provide minimal protection but enhance magical defences.",
         "modifiers": {"defence": 1,
                       "physical_resistance": 0,

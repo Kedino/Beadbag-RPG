@@ -4,6 +4,7 @@ from .entity import Entity
 from .beadbag import Beadbag, Drawbag
 from core.bead_effects import EFFECT_MAP
 from .data.default_bead_definitions import BEAD_DEFINITIONS
+from .effect_manager import EffectManager
 
 
 class Actor(Entity):
@@ -12,13 +13,13 @@ class Actor(Entity):
         self.mana_retention = mana_retention if mana_retention is not None else 0
         self.current_mana = 0
         self.damage = 1
-        self.current_successes = 0
 
         self.draw_count = draw_count
         
         self.beadbag = Beadbag()
         self.drawbag = Drawbag(self.beadbag)
         self.initialise_starting_beads()
+        self.active_effects = EffectManager()
 
         self.bead_rules = {
             'white': {'is_success': True, 'resource': None, 'effects': [], "event": None},
