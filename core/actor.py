@@ -27,18 +27,48 @@ class Actor(Entity):
         }
 
         self.event_queue = []
+
+    @property
+    def effective_defence(self):
+        total = super().effective_defence
+        total += self.active_effects.get_modifier("defence")
+        return total
+    
+    @property
+    def effective_physical_resistance(self):
+        total = super().effective_physical_resistance
+        total += self.active_effects.get_modifier("physical_resistance")
+        return total
+    
+    @property
+    def effective_magical_resistance(self):
+        total = super().effective_magical_resistance
+        total += self.active_effects.get_modifier("magical_resistance")
+        return total
+    
+    @property
+    def effective_max_health(self):
+        total = super().effective_max_health
+        total += self.active_effects.get_modifier("max_health")
+        return total
     
     @property
     def effective_mana_retention(self):
-        return self.mana_retention
+        total = self.mana_retention
+        total += self.active_effects.get_modifier("mana_retention")
+        return total
 
     @property
     def effective_damage(self):
-        return self.damage
+        total = self.damage
+        total += self.active_effects.get_modifier("damage")
+        return total
     
     @property
     def effective_draw_count(self):
-        return self.draw_count
+        total = self.draw_count
+        total += self.active_effects.get_modifier("draws")
+        return total
 
     def modify_bead_rule(self, color, is_success=None, resource=None, add_effects=None):
         if color not in self.bead_rules:

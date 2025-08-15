@@ -1,5 +1,9 @@
 # core/data/equipment.py
 
+# This file contains definitions for various basic equipment items in the game.
+# In addition to the care properties, each item can have a "equipped_effect" property
+# that defines an effect applied while the item is equipped.
+
 WEAPONS = {
     "short_sword": {
         "name": "Short Sword",

@@ -42,6 +42,8 @@ class Character(Actor):
             return False
         for slot in slots_to_clear:
             self.equipped_items[slot] = None
+        if "equipped_effect" in item:
+            self.active_effects.remove_effect(item["equipped_effect"])
         self.add_to_inventory(item)
         return True
 
@@ -56,6 +58,8 @@ class Character(Actor):
             if currently_equipped:
                self.unequip_item(currently_equipped)
             self.equipped_items[slot] = item
+        if "equipped_effect" in item:
+            self.active_effects.add_effect(item["equipped_effect"])
         self.remove_from_inventory(item)
         return True
         
