@@ -33,6 +33,61 @@ class Character(Actor):
         for _ in range(failure_count):
             self.beadbag.add_bead('black', 'permanent')
         
+    @property
+    def effective_defence(self):
+        total = super().effective_defence
+        for item in self.equipped_items.values():
+            if item:
+                total += item.get("modifiers", {}).get("defence", 0)
+        return total
+    
+    @property
+    def effective_physical_resistance(self):
+        total = super().effective_physical_resistance
+        for item in self.equipped_items.values():
+            if item:
+                total += item.get("modifiers", {}).get("physical_resistance", 0)
+        return total
+    
+    @property
+    def effective_magical_resistance(self):
+        total = super().effective_magical_resistance
+        for item in self.equipped_items.values():
+            if item:
+                total += item.get("modifiers", {}).get("magical_resistance", 0)
+        return total
+    
+    @property
+    def effective_max_health(self):
+        total = super().effective_max_health
+        for item in self.equipped_items.values():
+            if item:
+                total += item.get("modifiers", {}).get("max_health", 0)
+        return total
+    
+    @property
+    def effective_mana_retention(self):
+        total = self.mana_retention
+        for item in self.equipped_items.values():
+            if item:
+                total += item.get("modifiers", {}).get("mana_retention", 0)
+        return total
+
+    @property
+    def effective_damage(self):
+        total = self.damage
+        for item in self.equipped_items.values():
+            if item:
+                total += item.get("modifiers", {}).get("damage", 0)
+        return total
+    
+    @property
+    def effective_draw_count(self):
+        total = self.draw_count
+        for item in self.equipped_items.values():
+            if item:
+                total += item.get("modifiers", {}).get("draws", 0)
+        return total
 
 #Equipment & Progression:
 
@@ -84,6 +139,26 @@ class Character(Actor):
             if getattr(item, "type", None) == type 
             or (isinstance(item, dict) and item.get("type", None) == type)
             ]
-        
+    
+# Training & Skills:
+
     def add_training(self, skill):
         """Learn new skill/training"""
+
+# repr
+    def __repr__(self):
+        base = super().__repr__()
+        parts = [base]
+        if hasattr(self, "race") and self.race:
+            parts.append(f"Race: {self.race}")
+        if hasattr(self, "equipped_items") and self.equipped_items:
+            equipped = [
+                f"{slot.capitalize()}: {item['name']}" 
+                for slot, item in self.equipped_items.items() if item
+            ]
+            if equipped:
+                parts.append("Equipped: " + ", ".join(equipped))
+        if hasattr(self, "training") and self.training:
+        # Add code for training here
+            pass
+        return " | ".join(parts)

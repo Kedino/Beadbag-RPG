@@ -180,7 +180,8 @@ class Actor(Entity):
             f"Draw Count: {self.effective_draw_count}",
             f"Damage: {self.effective_damage}",
         ]
-        if self.active_effects:
-            #Here we will later add code to represent active effects
-            pass
+        if hasattr(self, "active_effects") and self.active_effects.list_active_effects():
+            effects = self.active_effects.list_active_effects()
+            effect_summaries = [e.get("type", "effect") for e in effects]
+            parts.append(f"Effects: {', '.join(effect_summaries)}")
         return " | ".join(parts)   
