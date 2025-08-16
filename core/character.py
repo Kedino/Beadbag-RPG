@@ -17,6 +17,9 @@ class Character(Actor):
             for stat_to_modify, bonus in race_data['stats_modifiers'].items():
                 current_value = getattr(self, stat_to_modify)
                 setattr(self, stat_to_modify, current_value + bonus)
+            for starting_bead in race_data['starting_beads']:
+                bead_color, bead_type = starting_bead
+                self.beadbag.add_bead(bead_color, bead_type)
 
         self.training = []
 
