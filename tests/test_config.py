@@ -1,9 +1,10 @@
 # tests/test_config.py
 
 TEST_CONFIG = {
-    "Actor creation and __repr__": False,
+    "Actor creation and __repr__": True,
     "Beadbag methods": True,
     "Beadbag should_be_removed logic": True,
-    "Character creation and __repr__": False,
-    "Entity creation and __repr__": False,
+    "Character creation and __repr__": True,
+    "Entity creation and __repr__": True,
+    "Equip and unequip items in Character": True,
 }

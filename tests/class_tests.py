@@ -6,6 +6,10 @@ from core.bead_effects import EFFECT_MAP
 from core.actor import Actor
 from core.character import Character
 from .test_config import TEST_CONFIG
+from core.data.equipment import WEAPONS, ARMOUR
+
+two_handed_sword = WEAPONS["two_handed_sword"]
+sword = WEAPONS["short_sword"]
 
 
 # =======================================================================
@@ -13,6 +17,7 @@ from .test_config import TEST_CONFIG
 # =======================================================================
 # Each key in ALL_TESTS is a test name. Its value is a dictionary
 # that defines the test.
+# Run tests from the root using "uv run -m tests.class_tests"
 #
 # --- Optional Keys ---
 # "status": Use this key to mark a test with a special status.
@@ -26,6 +31,7 @@ from .test_config import TEST_CONFIG
 #
 # 2. Action Test: Performs actions on an object and checks its state.
 #    Requires keys: "Class", "creation_args", "action_tests"
+#    Optional "check_return_value": True for methods that return a value.
 #
 # 3. Function Test: Tests a simple, stateless method.
 #    Requires keys: "Class", "function_tests"
@@ -66,10 +72,72 @@ ALL_TESTS = {
         ],
     },
     "Character creation and __repr__": {
-        "status": "incomplete",
         "Class": Character,
-        "test_args": [],
-        "Expected Output": [],
+        "test_args": [
+            ("Dwarf", "Dwarf", 2, 0, 0, 12, 0, 5),
+            ("Elf", "Elf", 1, 0, 1, 10, 1, 6),
+        ],
+        "Expected Output": [
+            ("Dwarf | (HP: 12/12) | [Def: 2, P.Res: 0, M.Res: 0] | Mana: 0 | Draw Count: 5 | Damage: 1 | Race: Dwarf"),
+            ("Elf | (HP: 10/10) | [Def: 1, P.Res: 0, M.Res: 1] | Mana: 0 | Draw Count: 6 | Damage: 1 | Race: Elf"),
+        ],
+    },
+    "Equip and unequip items in Character": {
+        "Class": Character,
+        "creation_args": ("TestCharacter", "Human", 1, 0, 0, 10, 0, 5),
+        "action_tests": [
+            {
+                "method_to_call": "add_to_inventory",
+                "method_args": two_handed_sword,
+                "state_check_method": "has_item",
+                "state_check_args": (two_handed_sword,),
+                "expected_state": True
+            },
+            {
+                "method_to_call": "equip_item",
+                "method_args": (two_handed_sword,),
+                "state_check_method": "list_equipped_items",
+                "expected_state": [two_handed_sword]
+            },
+            {
+                "method_to_call": "remove_from_inventory",
+                "method_args": (two_handed_sword,),
+                "check_return_value": True,
+                "expected_state": False
+            },
+            {
+                "method_to_call": "add_to_inventory",
+                "method_args": (sword,),
+                "state_check_method": "has_item",
+                "state_check_args": (sword,),
+                "expected_state": True
+            },
+            {
+                "method_to_call": "add_to_inventory",
+                "method_args": sword,
+                "state_check_method": "has_item",
+                "state_check_args": (sword,),
+                "expected_state": True
+            },
+            {
+                "method_to_call": "equip_item",
+                "method_args": (sword,),
+                "state_check_method": "list_equipped_items",
+                "expected_state": [sword]
+            },
+            {
+                "method_to_call": "unequip_item",
+                "method_args": (sword,),
+                "state_check_method": "list_equipped_items",
+                "expected_state": []
+            },
+            {
+                "method_to_call": "remove_from_inventory",
+                "method_args": (sword,),
+                "state_check_method": "list_items",
+                "expected_state": (two_handed_sword)
+            },
+        ],
     },
     "Beadbag methods": {
         "Class": Beadbag,
@@ -189,13 +257,18 @@ def run_tests():
                 method_to_call = action_test["method_to_call"]
                 method_args = action_test["method_args"]
                 state_check_method_name = action_test["state_check_method"]
+                state_check_args = action_test.get("state_check_args", ())
                 expected_state = action_test["expected_state"]
+                check_return_value = action_test.get("check_return_value", False)
                 try:
                     action_method = getattr(entity, method_to_call)
-                    action_method(*method_args)
-                    state_check_method = getattr(entity, state_check_method_name)
-                    output_state = state_check_method()
-                    assert output_state == expected_state
+                    result = action_method(*method_args)
+                    if check_return_value:
+                        assert result == expected_state
+                    else:
+                        state_check_method = getattr(entity, state_check_method_name)
+                        output_state = state_check_method(*state_check_args)
+                        assert output_state == expected_state
                     passed_tests += 1
                     print(f"Action Test: {method_to_call} - Passed")
                 except AssertionError:

@@ -38,7 +38,7 @@ WEAPONS = {
         "maneuvers": [],
         "on_hit_effects": ["stun"],
     },    
-    "war pick": {
+    "war_pick": {
         "name": "War Pick",
         "type": "one_handed_weapon",
         "slot": ["main_hand"],
@@ -60,7 +60,7 @@ WEAPONS = {
         "maneuvers": ["parry","riposte"],
         "on_hit_effects": [],
     },
-    "two handed sword": {
+    "two_handed_sword": {
         "name": "Two-Handed Sword",
         "type": "two_handed_weapon",
         "slot": ["main_hand", "off_hand"],
@@ -71,7 +71,7 @@ WEAPONS = {
         "maneuvers": ["cleave"],
         "on_hit_effects": ["slash", "heavy_blow"],
     },
-    "two handed axe": {
+    "two_handed_axe": {
         "name": "Two-Handed Axe",
         "type": "two_handed_weapon",
         "slot": ["main_hand", "off_hand"],
@@ -82,7 +82,7 @@ WEAPONS = {
         "maneuvers": ["cleave"],
         "on_hit_effects": ["bleed", "heavy_blow"],
     },
-    "two handed hammer": {
+    "two_handed_hammer": {
         "name": "Two-Handed Hammer",
         "type": "two_handed_weapon",
         "slot": ["main_hand", "off_hand"],

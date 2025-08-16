@@ -7,14 +7,14 @@ from core.bead_effects import EFFECT_MAP
 from .data.races import RACES
 
 class Character(Actor):
-    def __init__(self, name, race_name="Human", defence=None, physical_resistance=None, magical_resistance=None, health=None, draw_count=None, mana_retention=None):
-        super().__init__(name, defence, physical_resistance, magical_resistance, health, draw_count, mana_retention)
+    def __init__(self, name, race_name="Human", defence=None, physical_resistance=None, magical_resistance=None, health=None, mana_retention=None, draw_count=None):
+        super().__init__(name, defence, physical_resistance, magical_resistance, health, mana_retention, draw_count)
         
         self.race = None
         race_data = RACES.get(race_name.lower())
         if race_data:
             self.race = race_data["name"]
-            for stat_to_modify, bonus in race_data['stat_modifiers'].items():
+            for stat_to_modify, bonus in race_data['stats_modifiers'].items():
                 current_value = getattr(self, stat_to_modify)
                 setattr(self, stat_to_modify, current_value + bonus)
 
