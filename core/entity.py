@@ -27,7 +27,10 @@ class Entity():
         return self.base_max_health
 
     def change_health(self, amount):
+        prev_alive = self.is_alive()
         self.current_health = max(0, min(self.effective_max_health, self.current_health + amount))
+        if prev_alive and not self.is_alive(): 
+            self.die()
 
     def gain_health(self, amount):
         self.change_health(abs(amount))

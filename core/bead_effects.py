@@ -5,11 +5,9 @@ from core.data.effects import EFFECTS
 from core.effect_manager import EffectManager
 
 def bead_effect_degen(entity, amount=1):
-    # placeholder
     entity.lose_health(amount)
 
 def bead_effect_heal(entity, amount=1):
-    # placeholder
     entity.gain_health(amount)
 
 def bead_effect_critical_success(entity, amount=1):
