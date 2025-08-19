@@ -117,11 +117,12 @@ class Actor(Entity):
                 pass
 
     def action_resolution(self, target):
-        self.current_successes = self.count_successes()
+        bonus_successes = [0]
         for bead in self.drawbag.beads_in_bag:
-            self.apply_bead_effect(bead)
-        if self.current_successes > target.effective_defence:
-            self.resolve_hit(target)
+            self.apply_bead_effect(bead, bonus_successes)
+        total_successes = self.count_successes() + bonus_successes[0]
+        if total_successes > target.effective_defence:
+            self.resolve_hit(target)  
         
         
     def resolve_hit(self, target):
@@ -157,13 +158,13 @@ class Actor(Entity):
             if callable(add_method):
                 add_method(1)
 
-    def apply_bead_effect(self, bead):
+    def apply_bead_effect(self, bead, bonus_successes):
         rule = self.get_bead_rules(bead)
         effects = rule.get('effects', [])
         for effect in effects:
             effect_func = EFFECT_MAP.get(effect)
             if callable(effect_func):
-                effect_func(self)
+                effect_func(self, bonus_successes)
 
     def gain_mana(self, amount):
         self.mana += amount

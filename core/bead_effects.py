@@ -11,12 +11,10 @@ def bead_effect_heal(entity, amount=1):
     entity.gain_health(amount)
 
 def bead_effect_critical_success(entity, amount=1):
-    # placeholder
-    entity.current_successes += amount
+    entity.bonus_successes += amount
 
 def bead_effect_critical_failure(entity, amount=1):
-    # placeholder
-    entity.current_successes -= amount
+    entity.bonus_successes -= amount
 
 def bead_effect_vulnerability(entity, amount=1):
     effect = copy.deepcopy(EFFECTS["vulnerability"])
