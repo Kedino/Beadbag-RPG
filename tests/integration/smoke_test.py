@@ -5,6 +5,7 @@
 # uv run -m tests.integration.smoke_test 
 
 from core.character import Character
+from core.data.equipment import WEAPONS, ARMOUR
 
 # --- Spells ---
 class Spell:
@@ -59,7 +60,7 @@ def collect_resources_from_draw(actor):
 
 def seed_demo_loadout(entity, enemy=False):
     # Replace a few black-permanent with blue-permanent for mana
-    to_replace = 3 if not enemy else 2
+    to_replace = 6 if not enemy else 2
     while to_replace > 0 and entity.beadbag.remove_bead_by_type("black", "permanent"):
         entity.beadbag.add_bead("blue", "permanent")
         to_replace -= 1
@@ -123,8 +124,7 @@ def enemy_turn(enemy, player, spells):
     fb = spells["firebolt"]
     if enemy.current_mana >= fb.cost and consume_mana(enemy, fb.cost):
         msg = fb.fn(enemy, player)
-    else:
-        msg = basic_attack(enemy, player)
+    msg = basic_attack(enemy, player)
     end_of_turn_cleanup(enemy)
     return msg
 
@@ -145,7 +145,7 @@ def run_battle(player, enemy):
         while player.current_mana > 0:
             available_spells = {}
             for spell_key, spell_obj in spells.items():
-                if spell_key not in used_spells and spell_obj.cost <= player.current_mana:
+                if spell_obj.name not in used_spells and spell_obj.cost <= player.current_mana:
                     available_spells[spell_key] = spell_obj
             if not available_spells:
                 print("No more spells available this turn.")
