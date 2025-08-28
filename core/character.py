@@ -70,7 +70,7 @@ class Character(Actor):
     
     @property
     def effective_mana_retention(self):
-        total = self.mana_retention
+        total = super().effective_mana_retention
         for item in self.equipped_items.values():
             if item:
                 total += item.get("modifiers", {}).get("mana_retention", 0)
@@ -78,7 +78,7 @@ class Character(Actor):
 
     @property
     def effective_damage(self):
-        total = self.damage
+        total = super().effective_damage
         for item in self.equipped_items.values():
             if item:
                 total += item.get("modifiers", {}).get("damage", 0)
@@ -86,7 +86,7 @@ class Character(Actor):
     
     @property
     def effective_draw_count(self):
-        total = self.draw_count
+        total = super().effective_draw_count
         for item in self.equipped_items.values():
             if item:
                 total += item.get("modifiers", {}).get("draws", 0)

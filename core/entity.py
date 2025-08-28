@@ -3,11 +3,11 @@
 class Entity():
     def __init__(self, name, defence=1, physical_resistance=0, magical_resistance=0, health=10):
         self.name = name
-        self.base_defence = defence
-        self.base_physical_resistance = physical_resistance
-        self.base_magical_resistance = magical_resistance
-        self.current_health = health
-        self.base_max_health = health
+        self.base_defence = defence if defence is not None else 1
+        self.base_physical_resistance = physical_resistance if physical_resistance is not None else 0
+        self.base_magical_resistance = magical_resistance if magical_resistance is not None else 0
+        self.base_max_health = health if health is not None else 10
+        self.current_health = self.base_max_health
         self.active_effects = []
 
     @property
@@ -31,6 +31,9 @@ class Entity():
         self.current_health = max(0, min(self.effective_max_health, self.current_health + amount))
         if prev_alive and not self.is_alive(): 
             self.die()
+
+    def die(self):
+        pass
 
     def gain_health(self, amount):
         self.change_health(abs(amount))

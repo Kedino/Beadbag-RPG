@@ -7,12 +7,25 @@ class Beadbag():
         self.beads_in_bag = []
 
     def add_bead(self, color, permanence):
+        color = color.lower()
+        permanence = permanence.lower()
+        if permanence not in ['permanent', 'persistent', 'temporary']:
+            raise ValueError("Permanence must be 'permanent', 'persistent', or 'temporary'.")
         bead = {'color': color, 'permanence': permanence}
         self.beads_in_bag.append(bead)
 
     def remove_bead(self, bead):
         if bead in self.beads_in_bag:
             self.beads_in_bag.remove(bead)
+            return True
+        return False
+    
+    def remove_bead_by_type(self, color, permanence):
+        for bead in self.beads_in_bag:
+            if bead['color'] == color and bead['permanence'] == permanence:
+                self.beads_in_bag.remove(bead)
+                return True
+        return False
 
     def list_beads(self):
         return list(self.beads_in_bag)

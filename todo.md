@@ -1,5 +1,5 @@
 1 - [] write tests for EffectManager
-2 - [] update critical methods in bead_effects
+2 - [x] update critical methods in bead_effects
 3 - [] move EffectManager from Actor to Entity. Update tests that might fail.
 4 - [] write framework for integration tests
 5 - [] Write code for events, and/or EventManager

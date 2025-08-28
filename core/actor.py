@@ -14,7 +14,7 @@ class Actor(Entity):
         self.current_mana = 0
         self.damage = 1
 
-        self.draw_count = draw_count
+        self.draw_count = draw_count if draw_count is not None else 5
         
         self.beadbag = Beadbag()
         self.drawbag = Drawbag(self.beadbag)
@@ -28,46 +28,51 @@ class Actor(Entity):
 
         self.event_queue = []
 
+    @staticmethod
+    def _mod(effects, key):
+        value = effects.get_modifier(key)
+        return 0 if value is None else value
+
     @property
     def effective_defence(self):
         total = super().effective_defence
-        total += self.active_effects.get_modifier("defence")
+        total += self._mod(self.active_effects, "defence")
         return total
     
     @property
     def effective_physical_resistance(self):
         total = super().effective_physical_resistance
-        total += self.active_effects.get_modifier("physical_resistance")
+        total += self._mod(self.active_effects, "physical_resistance")
         return total
     
     @property
     def effective_magical_resistance(self):
         total = super().effective_magical_resistance
-        total += self.active_effects.get_modifier("magical_resistance")
+        total += self._mod(self.active_effects, "magical_resistance")
         return total
     
     @property
     def effective_max_health(self):
         total = super().effective_max_health
-        total += self.active_effects.get_modifier("max_health")
+        total += self._mod(self.active_effects, "max_health")
         return total
     
     @property
     def effective_mana_retention(self):
         total = self.mana_retention
-        total += self.active_effects.get_modifier("mana_retention")
+        total += self._mod(self.active_effects, "mana_retention")
         return total
 
     @property
     def effective_damage(self):
         total = self.damage
-        total += self.active_effects.get_modifier("damage")
+        total += self._mod(self.active_effects, "damage")
         return total
     
     @property
     def effective_draw_count(self):
         total = self.draw_count
-        total += self.active_effects.get_modifier("draws")
+        total += self._mod(self.active_effects, "draw_count")
         return total
 
     def modify_bead_rule(self, color, is_success=None, resource=None, add_effects=None):
@@ -167,10 +172,10 @@ class Actor(Entity):
                 effect_func(self, bonus_successes)
 
     def gain_mana(self, amount):
-        self.mana += amount
+        self.current_mana += amount
 
     def reset_mana(self):
-        self.mana = min(self.mana, self.mana_retention)
+        self.current_mana = min(self.current_mana, self.mana_retention)
 
     def __repr__(self):
         parts = [
