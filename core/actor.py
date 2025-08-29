@@ -5,6 +5,7 @@ from .beadbag import Beadbag, Drawbag
 from core.bead_effects import EFFECT_MAP
 from .data.default_bead_definitions import BEAD_DEFINITIONS
 from .effect_manager import EffectManager
+from core.equip_effects import ON_HIT_EFFECT_MAP
 
 
 class Actor(Entity):
@@ -131,10 +132,20 @@ class Actor(Entity):
         
         
     def resolve_hit(self, target):
-        damage = self.damage - target.effective_physical_resistance
+        damage = self.effective_damage - target.effective_physical_resistance
         if damage < 0:
             damage = 0
         target.lose_health(damage)
+        self.apply_on_hit_effects(target)
+
+    def apply_on_hit_effects(self, target):
+        for effect in self.active_effects.list_active_effects():
+            if effect.get("type") == "on_hit":
+                effect_name = effect.get("name")
+                effect_func = ON_HIT_EFFECT_MAP.get(effect_name)
+                if callable(effect_func):
+                    effect_func(self, target)
+
         
     def draw_beads(self, draw_count=None):
         if draw_count is None:
