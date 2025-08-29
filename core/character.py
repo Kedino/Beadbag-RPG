@@ -92,7 +92,7 @@ class Character(Actor):
                 total += item.get("modifiers", {}).get("draws", 0)
         return total
 
-#Equipment & Progression:
+# Equipment & Progression:
 
     def unequip_item(self, item):
         slots_to_clear = item.get("slot") if isinstance(item, dict) else getattr(item, "slot", None)

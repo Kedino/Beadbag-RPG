@@ -60,10 +60,12 @@ def collect_resources_from_draw(actor):
 
 def seed_demo_loadout(entity, enemy=False):
     # Replace a few black-permanent with blue-permanent for mana
-    to_replace = 6 if not enemy else 2
+    to_replace = 3 if not enemy else 2
     while to_replace > 0 and entity.beadbag.remove_bead_by_type("black", "permanent"):
         entity.beadbag.add_bead("blue", "permanent")
         to_replace -= 1
+    entity.draw_count += 2
+    entity.modify_bead_rule("blue", is_success=True, resource="mana")
 
     entity.damage = 2 # if not enemy else 1
 
@@ -75,6 +77,48 @@ def initial_draw_and_resources(actor):
              for b in actor.drawbag.beads_in_bag]
     print(f"Drawn beads: {drawn}")
     print(f"Successes: {actor.count_successes()} | Mana: {actor.current_mana}")
+
+def choose_loadout():    
+    loadouts = {
+            1: {
+                "name": "Scout",
+                "description": "Light armor + hand axe - mobile with bleed effects",
+                "items": [WEAPONS["hand_axe"], ARMOUR["light_armour"], ARMOUR["light_shield"]],
+                "preferred_spell": "curse" 
+            },
+            2: {
+                "name": "Knight", 
+                "description": "Shield + sword - balanced offense/defense with parry",
+                "items": [WEAPONS["short_sword"], ARMOUR["light_shield"], ARMOUR["medium_armour"]],
+                "preferred_spell": "minor_heal" 
+            },
+            3: {
+                "name": "Berserker",
+                "description": "Two-handed axe - high damage with cleave potential", 
+                "items": [WEAPONS["two_handed_axe"], ARMOUR["medium_armour"]],
+                "preferred_spell": "firebolt"  
+            }
+        }
+    for num, loadout in loadouts.items():
+        print(f"{num}. {loadout['name']} - {loadout['description']}")
+    while True:
+        try:
+            choice=int(input("Enter choice (1-3): "))
+            if choice in loadouts:
+                return loadouts[choice]
+            else:
+                print("Invalid choice. Please select 1, 2, or 3.")
+        except ValueError:
+            print("Please enter a number.")
+
+def apply_loadout(entity, loadout, enemy=False):
+    for item in loadout["items"]:
+        entity.add_to_inventory(item)
+        entity.equip_item(item)
+    if enemy == True:
+        entity.preferred_spell = loadout.get("preferred_spell", None)
+
+
 
 def basic_attack(attacker, defender):
     bonus_successes = [0]
@@ -121,12 +165,13 @@ def end_of_turn_cleanup(actor):
 
 def enemy_turn(enemy, player, spells):
     initial_draw_and_resources(enemy)
-    fb = spells["firebolt"]
-    if enemy.current_mana >= fb.cost and consume_mana(enemy, fb.cost):
-        msg = fb.fn(enemy, player)
-    msg = basic_attack(enemy, player)
+    messages = []
+    spell = spells[enemy.preferred_spell] if enemy.preferred_spell in spells else spells["firebolt"]
+    if enemy.current_mana >= spell.cost and consume_mana(enemy, spell.cost):
+        messages.append(spell.fn(enemy, player))
+    messages.append(basic_attack(enemy, player))
     end_of_turn_cleanup(enemy)
-    return msg
+    return "\n".join(messages)
 
 # --- Main loop ---
 def run_battle(player, enemy):
@@ -181,6 +226,12 @@ def run_battle(player, enemy):
 def main():
     hero = Character("Hero", race_name="Human")
     dummy = Character("Dummy", race_name="Human")
+    print("Choose your loadout: ")
+    hero_loadout = choose_loadout()
+    apply_loadout(hero, hero_loadout, enemy=False)
+    print("Choose your enemy's loadout: ")
+    enemy_loadout = choose_loadout()
+    apply_loadout(dummy, enemy_loadout, enemy=True)
     seed_demo_loadout(hero, enemy=False)
     seed_demo_loadout(dummy, enemy=True)
     run_battle(hero, dummy)
