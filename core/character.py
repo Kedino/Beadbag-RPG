@@ -120,6 +120,29 @@ class Character(Actor):
             self.active_effects.add_effect(item["equipped_effect"])
         self.remove_from_inventory(item)
         return True
+    
+    def apply_item_effects(self, item, equipping=True):
+    effects_data = item.get("effects", {})
+    
+    for effect_type, effect_list in effects_data.items():
+        for effect_name in effect_list:
+            effect_data = {
+                "type": effect_type.rstrip('s'),  # "on_hit_effects" -> "on_hit_effect"
+                "effect_name": effect_name,
+                "source": item["name"]
+            }
+            if equipping:
+                self.active_effects.add_effect(effect_data)
+            else:
+                # Find and remove matching effect
+                matching_effects = [
+                    e for e in self.active_effects.active_effects
+                    if (e.get("type") == effect_data["type"] and 
+                        e.get("effect_name") == effect_name and
+                        e.get("source") == item["name"])
+                ]
+                for effect in matching_effects:
+                    self.active_effects.remove_effect(effect)
         
         
     def add_to_inventory(self, item):
