@@ -14,7 +14,7 @@ WEAPONS = {
                       "draws": 1,
         },
         "maneuvers": ["parry"],
-        "on_hit_effects": ["slash"],
+        "effects": {"on_hit_effects": ["slash"]},
     },
     "hand_axe": {
         "name": "Hand Axe",
@@ -25,7 +25,7 @@ WEAPONS = {
                       "draws": 1,
         },
         "maneuvers": [],
-        "on_hit_effects": ["bleed"],
+        "effects": {"on_hit_effects": ["bleed"]},
     },
     "warhammer": {
         "name": "Warhammer",
@@ -36,7 +36,7 @@ WEAPONS = {
                       "draws": 1,
         },
         "maneuvers": [],
-        "on_hit_effects": ["stun"],
+        "effects": {"on_hit_effects": ["stun"]},
     },    
     "war_pick": {
         "name": "War Pick",
@@ -47,7 +47,7 @@ WEAPONS = {
                       "draws": 1,
         },
         "maneuvers": [],
-        "on_hit_effects": ["pierce"],
+        "effects": {"on_hit_effects": ["pierce"]},
     },
     "dagger": {
         "name": "Dagger",
@@ -58,7 +58,6 @@ WEAPONS = {
                       "draws": 1,
         },
         "maneuvers": ["parry","riposte"],
-        "on_hit_effects": [],
     },
     "two_handed_sword": {
         "name": "Two-Handed Sword",
@@ -69,7 +68,7 @@ WEAPONS = {
                       "draws": 2,
         },
         "maneuvers": ["cleave"],
-        "on_hit_effects": ["slash", "heavy_blow"],
+        "effects": {"on_hit_effects": ["slash", "heavy_blow"]},
     },
     "two_handed_axe": {
         "name": "Two-Handed Axe",
@@ -80,7 +79,7 @@ WEAPONS = {
                       "draws": 2,
         },
         "maneuvers": ["cleave"],
-        "on_hit_effects": ["bleed", "heavy_blow"],
+        "effects": {"on_hit_effects": ["bleed", "heavy_blow"]},
     },
     "two_handed_hammer": {
         "name": "Two-Handed Hammer",
@@ -91,7 +90,7 @@ WEAPONS = {
                       "draws": 2,
         },
         "maneuvers": [],
-        "on_hit_effects": ["knockback", "stun", "heavy_blow"],
+        "effects": {"on_hit_effects": ["knockback", "stun", "heavy_blow"]},
     },
 }
 

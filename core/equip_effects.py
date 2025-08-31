@@ -11,6 +11,7 @@ def on_hit_slash(attacker, target, *args, **kwargs):
 def on_hit_bleed(attacker, target, *args, **kwargs):
     # Add temporary degen beads
     target.beadbag.add_bead("green", "temporary")
+    print(f"Bleed effect applied to {target.name}!")
     return f"Bleed effect applied to {target.name}!"
 
 def on_hit_stun(attacker, target, *args, **kwargs):

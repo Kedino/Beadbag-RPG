@@ -73,10 +73,21 @@ def initial_draw_and_resources(actor):
     actor.drawbag.beads_in_bag.clear()
     actor.draw_beads(draw_count=actor.effective_draw_count)
     collect_resources_from_draw(actor)
+    potential_bonus = [0]
+    for bead in actor.drawbag.beads_in_bag:
+        rule = actor.get_bead_rules(bead)
+        effects = rule.get('effects', [])
+        for effect in effects:
+            if effect == 'critical_success':
+                potential_bonus[0] += 1
+            elif effect == 'critical_failure':
+                potential_bonus[0] -= 1
+    base_successes = actor.count_successes()
     drawn = [b["color"] + ("(temp)" if b["permanence"] != "permanent" else "") 
              for b in actor.drawbag.beads_in_bag]
+    total_projected_successes = base_successes + potential_bonus[0]
     print(f"Drawn beads: {drawn}")
-    print(f"Successes: {actor.count_successes()} | Mana: {actor.current_mana}")
+    print(f"Successes: {total_projected_successes} | Mana: {actor.current_mana}")
 
 def choose_loadout():    
     loadouts = {
@@ -126,9 +137,8 @@ def basic_attack(attacker, defender):
         attacker.apply_bead_effect(bead, bonus_successes)
     total_successes = attacker.count_successes() + bonus_successes[0]
     if total_successes > defender.effective_defence:
-        dmg = max(0, attacker.effective_damage - defender.effective_physical_resistance)
-        defender.lose_health(dmg)
-        return f"{attacker.name} hits for {dmg} physical."
+        attacker.resolve_hit(defender)
+        return f"{attacker.name} hits for {attacker.effective_damage - defender.effective_physical_resistance} physical."
     return f"{attacker.name} misses."
 
 def consume_mana(caster, cost):

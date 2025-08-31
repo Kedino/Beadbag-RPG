@@ -5,7 +5,7 @@ RACES = {
         "name": "Human",
         "description": "Versatile and adaptable, humans excel in various roles.",
         "stats_modifiers": {},
-        "starting_beads": [("gold", "permanent"), ("purple", "permanent")],
+        "starting_beads": [("gold", "permanent"), ("grey", "permanent")],
         "bead_rules": {
             'gold': {'is_success': True, 'resource': None, 'effects': ['critical_success']},
             'grey': {'is_success': False, 'resource': None, 'effects': ['critical_failure']},

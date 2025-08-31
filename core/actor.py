@@ -140,8 +140,8 @@ class Actor(Entity):
 
     def apply_on_hit_effects(self, target):
         for effect in self.active_effects.list_active_effects():
-            if effect.get("type") == "on_hit":
-                effect_name = effect.get("name")
+            if effect.get("type") == "on_hit_effect":
+                effect_name = effect.get("effect_name")
                 effect_func = ON_HIT_EFFECT_MAP.get(effect_name)
                 if callable(effect_func):
                     effect_func(self, target)
