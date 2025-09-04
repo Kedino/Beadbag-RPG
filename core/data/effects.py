@@ -1,14 +1,24 @@
 # core/data/effects.py
 
 EFFECTS = {
-    "vulnerability": {
+    "physical_vulnerability": {
         "type": "vulnerability",
-        "modifiers": {"physical_resistance": -1, "magical_resistance": -1},
+        "modifiers": {"physical_resistance": -1},
         "duration": 1,
     },
-    "resilience": {
+    "magical_vulnerability": {
+        "type": "vulnerability",
+        "modifiers": {"physical_resistance": -1},
+        "duration": 1,
+    },
+    "physical_resilience": {
         "type": "resilience",
-        "modifiers": {"physical_resistance": 1, "magical_resistance": 1},
+        "modifiers": {"physical_resistance": 1},
+        "duration": 1,
+    },
+    "magical_resilience": {
+        "type": "resilience",
+        "modifiers": {"physical_resistance": 1},
         "duration": 1,
     },
 }
