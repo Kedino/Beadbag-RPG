@@ -8,7 +8,7 @@ EFFECTS = {
     },
     "magical_vulnerability": {
         "type": "vulnerability",
-        "modifiers": {"physical_resistance": -1},
+        "modifiers": {"magical_resistance": -1},
         "duration": 1,
     },
     "physical_resilience": {
@@ -18,7 +18,7 @@ EFFECTS = {
     },
     "magical_resilience": {
         "type": "resilience",
-        "modifiers": {"physical_resistance": 1},
+        "modifiers": {"magical_resistance": 1},
         "duration": 1,
     },
 }
