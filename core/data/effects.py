@@ -21,4 +21,19 @@ EFFECTS = {
         "modifiers": {"magical_resistance": 1},
         "duration": 1,
     },
+    'defence': {
+        "type": "defence",
+        "modifiers": {"defence": 1},
+        "duration": 1,
+    },
+    'damage': {
+        "type": "damage",
+        "modifiers": {"damage": 1},
+        "duration": 1,
+    },
+    'draws': {
+        "type": "draws",
+        "modifiers": {"draws": 1},
+        "duration": 1,
+    },
 }
