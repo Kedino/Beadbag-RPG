@@ -3,8 +3,7 @@
 from .entity import Entity
 from .beadbag import Beadbag, Drawbag
 from core.bead_effects import EFFECT_MAP
-from .data.default_bead_definitions import BEAD_DEFINITIONS
-from .effect_manager import EffectManager
+from .data.default_bead_definitions import BEAD_DEFINITIONS 
 from core.equip_effects import ON_HIT_EFFECT_MAP
 from .maneuver_manager import ManeuverManager
 
@@ -12,18 +11,17 @@ from .maneuver_manager import ManeuverManager
 class Actor(Entity):
     def __init__(self, name, defence=1, physical_resistance=None, magical_resistance=None, health=None, mana_retention=None, draw_count=5):
         super().__init__(name, defence, physical_resistance, magical_resistance, health)
-        self.mana_retention = mana_retention if mana_retention is not None else 0
+        self.base_mana_retention = mana_retention if mana_retention is not None else 0
         self.current_mana = 0
-        self.damage = 1
+        self.base_damage = 1
         self.expected_successes = 0
         self.spent_successes = 0
 
-        self.draw_count = draw_count if draw_count is not None else 5
+        self.base_draw_count = draw_count if draw_count is not None else 5
         
         self.beadbag = Beadbag()
         self.drawbag = Drawbag(self.beadbag)
         self.initialise_starting_beads()
-        self.active_effects = EffectManager()
         self.maneuver_manager = ManeuverManager(self)
 
         self.bead_rules = {
@@ -33,52 +31,18 @@ class Actor(Entity):
 
         self.event_queue = []
 
-    @staticmethod
-    def _mod(effects, key):
-        value = effects.get_modifier(key)
-        return 0 if value is None else value
-
-    @property
-    def effective_defence(self):
-        total = super().effective_defence
-        total += self._mod(self.active_effects, "defence")
-        return total
-    
-    @property
-    def effective_physical_resistance(self):
-        total = super().effective_physical_resistance
-        total += self._mod(self.active_effects, "physical_resistance")
-        return total
-    
-    @property
-    def effective_magical_resistance(self):
-        total = super().effective_magical_resistance
-        total += self._mod(self.active_effects, "magical_resistance")
-        return total
-    
-    @property
-    def effective_max_health(self):
-        total = super().effective_max_health
-        total += self._mod(self.active_effects, "max_health")
-        return total
-    
+       
     @property
     def effective_mana_retention(self):
-        total = self.mana_retention
-        total += self._mod(self.active_effects, "mana_retention")
-        return total
+        return self.base_mana_retention + self._mod("mana_retention")
 
     @property
     def effective_damage(self):
-        total = self.damage
-        total += self._mod(self.active_effects, "damage")
-        return total
+        return self.base_damage + self._mod("damage")
     
     @property
     def effective_draw_count(self):
-        total = self.draw_count
-        total += self._mod(self.active_effects, "draw_count")
-        return total
+        return self.base_draw_count + self._mod("draw_count")
 
     def modify_bead_rule(self, color, is_success=None, resource=None, add_effects=None):
         if color not in self.bead_rules:
@@ -154,7 +118,7 @@ class Actor(Entity):
         
     def draw_beads(self, draw_count=None):
         if draw_count is None:
-            draw_count = self.draw_count
+            draw_count = self.effective_draw_count
         self.drawbag.draw_bead(amount=draw_count)
     
     def count_successes(self):
@@ -191,7 +155,7 @@ class Actor(Entity):
         self.current_mana += amount
 
     def reset_mana(self):
-        self.current_mana = min(self.current_mana, self.mana_retention)
+        self.current_mana = min(self.current_mana, self.effective_mana_retention)
 
     def __repr__(self):
         parts = [
@@ -202,8 +166,8 @@ class Actor(Entity):
             f"Draw Count: {self.effective_draw_count}",
             f"Damage: {self.effective_damage}",
         ]
-        if hasattr(self, "active_effects") and self.active_effects.list_active_effects():
-            effects = self.active_effects.list_active_effects()
+        effects = self.active_effects.list_active_effects()
+        if effects:
             effect_summaries = [e.get("type", "effect") for e in effects]
             parts.append(f"Effects: {', '.join(effect_summaries)}")
         return " | ".join(parts)   

@@ -1,5 +1,7 @@
 # core/entity.py
 
+from core.effect_manager import EffectManager
+
 class Entity():
     def __init__(self, name, defence=1, physical_resistance=0, magical_resistance=0, health=10):
         self.name = name
@@ -8,23 +10,28 @@ class Entity():
         self.base_magical_resistance = magical_resistance if magical_resistance is not None else 0
         self.base_max_health = health if health is not None else 10
         self.current_health = self.base_max_health
-        self.active_effects = []
+        self.active_effects = EffectManager()
+
+
+    def _mod(self, key):
+        value = self.active_effects.get_modifier(key)
+        return 0 if value is None else value
 
     @property
     def effective_defence(self):
-        return self.base_defence
-    
+        return self.base_defence + self._mod("defence")
+
     @property
     def effective_physical_resistance(self):
-        return self.base_physical_resistance
-    
+        return self.base_physical_resistance + self._mod("physical_resistance")
+
     @property
     def effective_magical_resistance(self):
-        return self.base_magical_resistance 
-    
+        return self.base_magical_resistance + self._mod("magical_resistance")
+
     @property
     def effective_max_health(self):
-        return self.base_max_health
+        return self.base_max_health + self._mod("max_health")
 
     def change_health(self, amount):
         prev_alive = self.is_alive()
@@ -55,13 +62,6 @@ class Entity():
         self.base_magical_resistance += amount
     def lose_magical_resistance(self, amount):
         self.base_magical_resistance -= amount
-    
-    def add_effect(self, effect):
-        if effect not in self.active_effects:
-            self.active_effects.append(effect)
-    def remove_effect(self, effect):
-        if effect in self.active_effects:
-            self.active_effects.remove(effect)
 
     def gain_defence(self, amount):
         self.base_defence += amount
@@ -77,9 +77,10 @@ class Entity():
             f"(HP: {self.current_health}/{self.effective_max_health})",
             f"[Def: {self.effective_defence}, P.Res: {self.effective_physical_resistance}, M.Res: {self.effective_magical_resistance}]"
         ]
-        if self.active_effects:
-            #Here we will later add code to represent active effects
-            pass
+        effects = self.active_effects.list_active_effects()
+        if effects:
+            effect_summaries = [effect.get("type", "effect") for effect in effects]
+            parts.append(f"Effects: {', '.join(effect_summaries)}")
         return " | ".join(parts)
 
     
