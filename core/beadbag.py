@@ -60,6 +60,7 @@ class Drawbag(Beadbag):
         for bead in drawn:
             self.parent.remove_bead(bead)
             self.beads_in_bag.append(bead)
+        return list(drawn)
 
     def return_bead(self, bead):
         if bead in self.beads_in_bag:
@@ -70,6 +71,7 @@ class Drawbag(Beadbag):
         if bead in self.beads_in_bag:
             self.return_bead(bead)
             return self.draw_bead(amount=1)
+        return []
         
     def resolve_draw(self, clear_persist=False):
         for bead in self.beads_in_bag[:]:

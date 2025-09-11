@@ -1,4 +1,4 @@
-# core/maneuvers.py
+# core/maneuver_manager.py
 
 from core.data.maneuvers import MANEUVERS
 

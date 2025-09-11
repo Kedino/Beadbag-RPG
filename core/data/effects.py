@@ -31,9 +31,9 @@ EFFECTS = {
         "modifiers": {"damage": 1},
         "duration": 1,
     },
-    'draws': {
-        "type": "draws",
-        "modifiers": {"draws": 1},
+    'draw_count': {
+        "type": "draw_count",
+        "modifiers": {"draw_count": 1},
         "duration": 1,
     },
 }

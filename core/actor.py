@@ -6,6 +6,7 @@ from core.bead_effects import EFFECT_MAP
 from .data.default_bead_definitions import BEAD_DEFINITIONS
 from .effect_manager import EffectManager
 from core.equip_effects import ON_HIT_EFFECT_MAP
+from .maneuver_manager import ManeuverManager
 
 
 class Actor(Entity):
@@ -14,6 +15,8 @@ class Actor(Entity):
         self.mana_retention = mana_retention if mana_retention is not None else 0
         self.current_mana = 0
         self.damage = 1
+        self.expected_successes = 0
+        self.spent_successes = 0
 
         self.draw_count = draw_count if draw_count is not None else 5
         
@@ -21,10 +24,11 @@ class Actor(Entity):
         self.drawbag = Drawbag(self.beadbag)
         self.initialise_starting_beads()
         self.active_effects = EffectManager()
+        self.maneuver_manager = ManeuverManager(self)
 
         self.bead_rules = {
             'white': {'is_success': True, 'resource': None, 'effects': [], "event": None},
-            'black': {'is_success': False, 'resource': None, 'effects': []}, "event": None,
+            'black': {'is_success': False, 'resource': None, 'effects': [], "event": None},
         }
 
         self.event_queue = []
@@ -103,9 +107,10 @@ class Actor(Entity):
         self.drawbag.resolve_draw(clear_persist=False)
 
     def initial_draw(self):
-        self.drawbag.draw_bead(amount=self.draw_count)
+        self.drawbag.draw_bead(amount=self.effective_draw_count)
         for bead in self.drawbag.beads_in_bag:
             self.apply_resource_effect(bead)
+        self.expected_successes = self.count_successes()
         
     def draw_interaction(self):
         # Here we will later add code to handle player interactions
@@ -126,7 +131,7 @@ class Actor(Entity):
         bonus_successes = [0]
         for bead in self.drawbag.beads_in_bag:
             self.apply_bead_effect(bead, bonus_successes)
-        total_successes = self.count_successes() + bonus_successes[0]
+        total_successes = self.count_successes() + bonus_successes[0] - self.spent_successes
         if total_successes > target.effective_defence:
             self.resolve_hit(target)  
         
@@ -161,10 +166,10 @@ class Actor(Entity):
         return count
     
     def get_bead_rules(self, bead):
-        if bead["color"] in self.bead_rules:
-            return self.bead_rules[bead["color"]]
-        else:
-            return BEAD_DEFINITIONS.get(bead["color"], {})
+        color = bead["color"]
+        base = BEAD_DEFINITIONS.get(color, {})
+        override = self.bead_rules.get(color, {})
+        return {**base, **override}
        
     def apply_resource_effect(self, bead):
         rule = self.get_bead_rules(bead)

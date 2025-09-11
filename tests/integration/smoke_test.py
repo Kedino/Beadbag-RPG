@@ -34,13 +34,12 @@ def spell_cleanse(caster, target):
     temps = [b for b in caster.drawbag.beads_in_bag if b.get("permanence") == "temporary"]
     if not temps:
         return f"{caster.name} casts Cleanse, but nothing to remove."
-    removed = 0
+    new_beads = []
     for bead in temps:
-        caster.drawbag.return_bead(bead)
-        removed += 1
-    caster.drawbag.draw_bead(amount=removed)
-    collect_resources_from_draw(caster)
-    return f"{caster.name} casts Cleanse, removes {removed} temp bead(s) and redraws."
+        new_beads.extend(caster.drawbag.return_bead(bead))
+    for bead in new_beads:
+        caster.apply_resource_effect(bead)
+    return f"{caster.name} casts Cleanse, removes {len(temps)} temp bead(s) and redraws."
 
 def available_spells_table():
     return {
@@ -71,6 +70,7 @@ def seed_demo_loadout(entity, enemy=False):
 
 def initial_draw_and_resources(actor):
     actor.drawbag.beads_in_bag.clear()
+    actor.active_effects.progress_effects()
     actor.draw_beads(draw_count=actor.effective_draw_count)
     collect_resources_from_draw(actor)
     potential_bonus = [0]
