@@ -35,62 +35,44 @@ class Character(Actor):
             self.beadbag.add_bead('white', 'permanent')
         for _ in range(failure_count):
             self.beadbag.add_bead('black', 'permanent')
-        
-    @property
-    def effective_defence(self):
-        total = super().effective_defence
+
+    def _item_mod(self, key):
+        total = 0
+        seen = set()
         for item in self.equipped_items.values():
-            if item:
-                total += item.get("modifiers", {}).get("defence", 0)
-        return total
-    
-    @property
-    def effective_physical_resistance(self):
-        total = super().effective_physical_resistance
-        for item in self.equipped_items.values():
-            if item:
-                total += item.get("modifiers", {}).get("physical_resistance", 0)
-        return total
-    
-    @property
-    def effective_magical_resistance(self):
-        total = super().effective_magical_resistance
-        for item in self.equipped_items.values():
-            if item:
-                total += item.get("modifiers", {}).get("magical_resistance", 0)
-        return total
-    
-    @property
-    def effective_max_health(self):
-        total = super().effective_max_health
-        for item in self.equipped_items.values():
-            if item:
-                total += item.get("modifiers", {}).get("max_health", 0)
-        return total
-    
-    @property
-    def effective_mana_retention(self):
-        total = super().effective_mana_retention
-        for item in self.equipped_items.values():
-            if item:
-                total += item.get("modifiers", {}).get("mana_retention", 0)
+            if item and id(item) not in seen:
+                mods = item.get("modifiers", {})
+                total += mods.get(key, 0)
+                seen.add(id(item))
         return total
 
     @property
     def effective_damage(self):
-        total = super().effective_damage
-        for item in self.equipped_items.values():
-            if item:
-                total += item.get("modifiers", {}).get("damage", 0)
-        return total
-    
+        return super().effective_damage + self._item_mod("damage")
+
     @property
     def effective_draw_count(self):
-        total = super().effective_draw_count
-        for item in self.equipped_items.values():
-            if item:
-                total += item.get("modifiers", {}).get("draws", 0)
-        return total
+        return super().effective_draw_count + self._item_mod("draws")
+
+    @property
+    def effective_defence(self):
+        return super().effective_defence + self._item_mod("defence")
+
+    @property
+    def effective_physical_resistance(self):
+        return super().effective_physical_resistance + self._item_mod("physical_resistance")
+
+    @property
+    def effective_magical_resistance(self):
+        return super().effective_magical_resistance + self._item_mod("magical_resistance")
+
+    @property
+    def effective_max_health(self):
+        return super().effective_max_health + self._item_mod("max_health")
+
+    @property
+    def effective_mana_retention(self):
+        return super().effective_mana_retention + self._item_mod("mana_retention")
 
 # Equipment & Progression:
 

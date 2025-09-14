@@ -1,9 +1,9 @@
 1 - [] write tests for EffectManager
 2 - [x] update critical methods in bead_effects
-3 - [] move EffectManager from Actor to Entity. Update tests that might fail.
+3 - [x] move EffectManager from Actor to Entity. Update tests that might fail.
 4 - [x] write framework for integration tests
-5 - [] Implement on-hit effects
-6 - [] design and implement maneuvers
+5 - [x] Implement on-hit effects
+6 - [x] design and implement maneuvers
 7 - [] Write code for events, and/or EventManager
 8 - [] Create training tree 
 9 - [] Create levelling system

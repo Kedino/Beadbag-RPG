@@ -63,10 +63,10 @@ def seed_demo_loadout(entity, enemy=False):
     while to_replace > 0 and entity.beadbag.remove_bead_by_type("black", "permanent"):
         entity.beadbag.add_bead("blue", "permanent")
         to_replace -= 1
-    entity.draw_count += 2
+    entity.base_draw_count += 2
     entity.modify_bead_rule("blue", is_success=True, resource="mana")
 
-    entity.damage = 2 # if not enemy else 1
+    entity.base_damage = 2 # if not enemy else 1
 
 def initial_draw_and_resources(actor):
     actor.drawbag.beads_in_bag.clear()
