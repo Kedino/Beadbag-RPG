@@ -44,7 +44,7 @@ class ManeuverManager:
             return False, "group_used"
         if self.actor.spent_successes + m.get("cost", 0) > self.actor.expected_successes:
             return False, "not_enough_successes"
-        if name not in self.enabled_base_names():
+        if name not in self.enabled_maneuver_groups():
             return False, "not_enabled_by_equipment"
         return True, None
 
@@ -64,8 +64,8 @@ class ManeuverManager:
         return True, None
 
     def _apply_special(self, spec_name, target):
-        result = spec_name.get("result")
-        func = SPECIALS_MAP.get(result)
+        action = spec_name.get("action")
+        func = SPECIALS_MAP.get(action)
         if callable(func):
             func(self.actor, target, **spec_name)
 

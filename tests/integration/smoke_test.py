@@ -6,6 +6,7 @@
 
 from core.character import Character
 from core.data.equipment import WEAPONS, ARMOUR
+from core.data.maneuvers import MANEUVERS
 
 # --- Spells ---
 class Spell:
@@ -36,7 +37,7 @@ def spell_cleanse(caster, target):
         return f"{caster.name} casts Cleanse, but nothing to remove."
     new_beads = []
     for bead in temps:
-        new_beads.extend(caster.drawbag.return_bead(bead))
+        new_beads.extend(caster.drawbag.redraw_bead(bead))
     for bead in new_beads:
         caster.apply_resource_effect(bead)
     return f"{caster.name} casts Cleanse, removes {len(temps)} temp bead(s) and redraws."
@@ -47,6 +48,12 @@ def available_spells_table():
         "minor_heal": Spell("Minor Healing", 1, spell_minor_heal, "Heal 3 HP."),
         "curse": Spell("Curse", 1, spell_curse, "Add two temporary green beads to enemy."),
         "cleanse": Spell("Cleanse", 1, spell_cleanse, "Remove all temp beads in draw and redraw."),
+    }
+
+def available_spells(spell_table, used, player):
+    return {
+        k: v for k, v in spell_table.items()
+        if v.name not in used and v.cost <= player.current_mana
     }
 
 # --- Helpers ---
@@ -86,6 +93,8 @@ def initial_draw_and_resources(actor):
     drawn = [b["color"] + ("(temp)" if b["permanence"] != "permanent" else "") 
              for b in actor.drawbag.beads_in_bag]
     total_projected_successes = base_successes + potential_bonus[0]
+    actor.expected_successes = total_projected_successes
+    actor.spent_successes = 0
     print(f"Drawn beads: {drawn}")
     print(f"Successes: {total_projected_successes} | Mana: {actor.current_mana}")
 
@@ -147,6 +156,27 @@ def consume_mana(caster, cost):
     caster.current_mana -= cost
     return True
 
+def choose_maneuver_input(manager):
+    options = manager.get_available_maneuvers()
+    if not options:
+        print("No maneuvers available.")
+        return None
+    print("\nAvailable Maneuvers:")
+    for i, name in enumerate(options, 1):
+        m = MANEUVERS[name]
+        print(f"{i}. {m['name']} (Cost: {m.get('cost',0)}) - {m.get('description','')}")
+    choice = input("Use a maneuver? Enter number, or blank to skip: ").strip()
+    if not choice:
+        return None
+    try:
+        idx = int(choice) - 1
+        if 0 <= idx < len(options):
+            return options[idx]
+    except ValueError:
+        pass
+    print("Invalid choice.")
+    return None
+
 def choose_spell_input(spells, caster):
     if not spells:
         return None
@@ -172,6 +202,7 @@ def choose_spell_input(spells, caster):
 def end_of_turn_cleanup(actor):
     actor.drawbag.resolve_draw(clear_persist=False)  # temp beads removed; persistent/permanent handled
     actor.reset_mana()
+    actor.maneuver_manager.reset_maneuvers()
 
 def enemy_turn(enemy, player, spells):
     initial_draw_and_resources(enemy)
@@ -191,34 +222,15 @@ def run_battle(player, enemy):
         print("\n" + "-" * 60)
         print(f"Round {round_num}")
         print(player)
+        print("\n")
         print(enemy)
+        print("\n")
 
         initial_draw_and_resources(player)
-        print(f"Drawn: {len(player.drawbag.beads_in_bag)} | Successes: {player.count_successes()} | Mana: {player.current_mana}")
 
-        used_spells = set()
-        while player.current_mana > 0:
-            available_spells = {}
-            for spell_key, spell_obj in spells.items():
-                if spell_obj.name not in used_spells and spell_obj.cost <= player.current_mana:
-                    available_spells[spell_key] = spell_obj
-            if not available_spells:
-                print("No more spells available this turn.")
-                break
-            spell = choose_spell_input(available_spells, player)
-            if not spell:
-                print("Skipping spell casting.")
-                break
-            if consume_mana(player, spell.cost):
-                print(spell.fn(player, enemy))
-                used_spells.add(spell.name)
-                print(f"Remaining mana: {player.current_mana}")
-            else:
-                print(f"Not enough mana to cast {spell.name}.")
-                break
-            
-        print(basic_attack(player, enemy))
-        end_of_turn_cleanup(player)
+        print("proj:", player.expected_successes, "spent:", player.spent_successes) #temporary debug check
+
+        action_menu(player, enemy, available_spells_table())
 
         if not enemy.is_alive():
             break
@@ -232,6 +244,47 @@ def run_battle(player, enemy):
 
     print("\nBattle Over!")
     print("You win!" if not enemy.is_alive() else "You were defeated...")
+
+def action_menu(player, enemy, spells):
+    used_spells = set()
+    while True:
+        print("\nChoose Action:")
+        print("1. Perform maneuver")
+        print("2. Cast spell")
+        print("3. Resolve attack and end turn")
+        choice = input("Choose an action (1-3): ").strip()
+
+        if choice == "1":
+            name = choose_maneuver_input(player.maneuver_manager)
+            if not name:
+                continue
+            ok, reason = player.maneuver_manager.perform_maneuver(name, target=enemy)
+            if ok:
+                print(f"Used maneuver: {MANEUVERS[name]['name']}")
+                print(f"Projected successes left: {player.expected_successes - player.spent_successes}")
+            else:
+                print(f"Cannot use {name}: {reason}")
+            
+        elif choice == '2':
+            available = available_spells(spells, used_spells, player)
+            if not available:
+                print("No spells available to cast.")
+                continue
+            spell = choose_spell_input(available, player)
+            if not spell:
+                continue
+            if consume_mana(player, spell.cost):
+                print(spell.fn(player, enemy))
+                used_spells.add(spell.name)
+                print(f"Remaining mana: {player.current_mana}")
+            else:
+                print(f"Not enough mana to cast {spell.name}.")
+        elif choice == '3':
+            print(basic_attack(player, enemy))
+            end_of_turn_cleanup(player)
+            break
+        else:
+            print("Invalid choice. Please select 1, 2, or 3.")
 
 def main():
     hero = Character("Hero", race_name="Human")
