@@ -75,7 +75,7 @@ def seed_demo_loadout(entity, enemy=False):
 
     entity.base_damage = 2 # if not enemy else 1
 
-def initial_draw_and_resources(actor):
+def initial_draw_and_resources(actor, round_num, enemy):
     actor.drawbag.beads_in_bag.clear()
     actor.active_effects.progress_effects()
     actor.draw_beads(draw_count=actor.effective_draw_count)
@@ -95,6 +95,7 @@ def initial_draw_and_resources(actor):
     total_projected_successes = base_successes + potential_bonus[0]
     actor.expected_successes = total_projected_successes
     actor.spent_successes = 0
+    print_round_information(round_num, actor, enemy)
     print(f"Drawn beads: {drawn}")
     print(f"Successes: {total_projected_successes} | Mana: {actor.current_mana}")
 
@@ -109,13 +110,13 @@ def choose_loadout():
             2: {
                 "name": "Knight", 
                 "description": "Shield + sword - balanced offense/defense with parry",
-                "items": [WEAPONS["short_sword"], ARMOUR["light_shield"], ARMOUR["medium_armour"]],
+                "items": [WEAPONS["short_sword"], ARMOUR["heavy_shield"], ARMOUR["medium_armour"]],
                 "preferred_spell": "minor_heal" 
             },
             3: {
                 "name": "Berserker",
-                "description": "Two-handed axe - high damage with cleave potential", 
-                "items": [WEAPONS["two_handed_axe"], ARMOUR["medium_armour"]],
+                "description": "Two-handed hammer - high damage and stun potential", 
+                "items": [WEAPONS["two_handed_hammer"], ARMOUR["medium_armour"]],
                 "preferred_spell": "firebolt"  
             }
         }
@@ -204,8 +205,8 @@ def end_of_turn_cleanup(actor):
     actor.reset_mana()
     actor.maneuver_manager.reset_maneuvers()
 
-def enemy_turn(enemy, player, spells):
-    initial_draw_and_resources(enemy)
+def enemy_turn(enemy, player, spells, round_num):
+    initial_draw_and_resources(enemy, round_num, player) 
     messages = []
     spell = spells[enemy.preferred_spell] if enemy.preferred_spell in spells else spells["firebolt"]
     if enemy.current_mana >= spell.cost and consume_mana(enemy, spell.cost):
@@ -214,28 +215,28 @@ def enemy_turn(enemy, player, spells):
     end_of_turn_cleanup(enemy)
     return "\n".join(messages)
 
+def print_combat_summary(entity):
+    parts = str(entity).split(" | ")
+    # Expect: [Name, (HP ...), [Def ...], Mana..., Draw..., Damage..., Effects...]
+    core = [parts[0], parts[1], parts[2], parts[4], parts[5]]  # pick what you want
+    print(" | ".join(core))
+
+def print_details(entity):
+    print(entity)  # full repr
+
 # --- Main loop ---
 def run_battle(player, enemy):
     spells = available_spells_table()
     round_num = 1
     while player.is_alive() and enemy.is_alive():
-        print("\n" + "-" * 60)
-        print(f"Round {round_num}")
-        print(player)
-        print("\n")
-        print(enemy)
-        print("\n")
-
-        initial_draw_and_resources(player)
-
-        print("proj:", player.expected_successes, "spent:", player.spent_successes) #temporary debug check
+        initial_draw_and_resources(player, round_num, enemy)
 
         action_menu(player, enemy, available_spells_table())
 
         if not enemy.is_alive():
             break
 
-        print(enemy_turn(enemy, player, spells))
+        print(enemy_turn(enemy, player, spells, round_num))
         if not player.is_alive():
             break
         
@@ -245,14 +246,23 @@ def run_battle(player, enemy):
     print("\nBattle Over!")
     print("You win!" if not enemy.is_alive() else "You were defeated...")
 
+def print_round_information(round_num, player, enemy):
+    print("\n" + "-" * 60)
+    print(f"Round {round_num}")
+    print_combat_summary(player)
+    print("\n")
+    print_combat_summary(enemy)
+    print("\n")
+
 def action_menu(player, enemy, spells):
     used_spells = set()
     while True:
         print("\nChoose Action:")
         print("1. Perform maneuver")
         print("2. Cast spell")
-        print("3. Resolve attack and end turn")
-        choice = input("Choose an action (1-3): ").strip()
+        print("3. Show combattant details")
+        print("4. Resolve attack and end turn")
+        choice = input("Choose an action (1-4): ").strip()
 
         if choice == "1":
             name = choose_maneuver_input(player.maneuver_manager)
@@ -279,7 +289,12 @@ def action_menu(player, enemy, spells):
                 print(f"Remaining mana: {player.current_mana}")
             else:
                 print(f"Not enough mana to cast {spell.name}.")
+
         elif choice == '3':
+            print_details(player)
+            print_details(enemy)
+
+        elif choice == '4':
             print(basic_attack(player, enemy))
             end_of_turn_cleanup(player)
             break

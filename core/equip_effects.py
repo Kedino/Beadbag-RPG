@@ -5,6 +5,7 @@ def on_hit_slash(attacker, target, *args, **kwargs):
     if target.effective_physical_resistance <= 1:
         bonus_damage = 2
         target.lose_health(bonus_damage)
+        print(f"Slash deals {bonus_damage} extra damage to lightly armored foe!")
         return f"Slash deals {bonus_damage} extra damage to lightly armored foe!"
     return None
 
