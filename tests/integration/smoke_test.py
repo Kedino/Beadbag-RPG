@@ -77,7 +77,6 @@ def seed_demo_loadout(entity, enemy=False):
 
 def initial_draw_and_resources(actor, round_num, enemy):
     actor.drawbag.beads_in_bag.clear()
-    actor.active_effects.progress_effects()
     actor.draw_beads(draw_count=actor.effective_draw_count)
     collect_resources_from_draw(actor)
     potential_bonus = [0]
@@ -95,7 +94,6 @@ def initial_draw_and_resources(actor, round_num, enemy):
     total_projected_successes = base_successes + potential_bonus[0]
     actor.expected_successes = total_projected_successes
     actor.spent_successes = 0
-    print_round_information(round_num, actor, enemy)
     print(f"Drawn beads: {drawn}")
     print(f"Successes: {total_projected_successes} | Mana: {actor.current_mana}")
 
@@ -229,13 +227,15 @@ def run_battle(player, enemy):
     spells = available_spells_table()
     round_num = 1
     while player.is_alive() and enemy.is_alive():
+        player.active_effects.progress_effects()
+        print_round_information(round_num, player, enemy)
         initial_draw_and_resources(player, round_num, enemy)
-
         action_menu(player, enemy, available_spells_table())
 
         if not enemy.is_alive():
             break
-
+        
+        enemy.active_effects.progress_effects()
         print(enemy_turn(enemy, player, spells, round_num))
         if not player.is_alive():
             break
@@ -250,9 +250,9 @@ def print_round_information(round_num, player, enemy):
     print("\n" + "-" * 60)
     print(f"Round {round_num}")
     print_combat_summary(player)
-    print("\n")
+    print("")
     print_combat_summary(enemy)
-    print("\n")
+    print("")
 
 def action_menu(player, enemy, spells):
     used_spells = set()
