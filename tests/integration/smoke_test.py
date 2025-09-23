@@ -209,6 +209,25 @@ def enemy_turn(enemy, player, spells, round_num):
     spell = spells[enemy.preferred_spell] if enemy.preferred_spell in spells else spells["firebolt"]
     if enemy.current_mana >= spell.cost and consume_mana(enemy, spell.cost):
         messages.append(spell.fn(enemy, player))
+    # if enemy.current_mana >= 1 and consume_mana(enemy, 1):
+    #     messages.append(spell_guided_strike(enemy, player)) Casts Guided Strike with any remaining mana
+    while True:
+        remaining = enemy.expected_successes - enemy.spent_successes
+        target_def = player.effective_defence
+        if remaining <= 0 or remaining == target_def:
+            break
+        options = enemy.maneuver_manager.get_available_maneuvers()
+        if not options:
+            break
+        name = options[0]  # pick first available
+        cost = MANEUVERS[name].get("cost", 0)
+        if remaining > target_def and remaining - cost <= target_def:
+            break
+        ok, reason = enemy.maneuver_manager.perform_maneuver(name, target=player)
+        if ok:
+            messages.append(f"{enemy.name} uses maneuver: {MANEUVERS[name]['name']}")
+        else:
+            break
     messages.append(basic_attack(enemy, player))
     end_of_turn_cleanup(enemy)
     return "\n".join(messages)
