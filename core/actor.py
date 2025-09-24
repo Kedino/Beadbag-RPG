@@ -23,6 +23,7 @@ class Actor(Entity):
         self.drawbag = Drawbag(self.beadbag)
         self.initialise_starting_beads()
         self.maneuver_manager = ManeuverManager(self)
+        self.maneuver_groups = []
 
         self.bead_rules = {
             'white': {'is_success': True, 'resource': None, 'effects': [], "event": None},

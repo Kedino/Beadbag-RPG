@@ -47,7 +47,7 @@ MANEUVERS = {
         "type": "defensive",
         "description": "Brace yourself with a heavy shield, greatly reducing damage taken but limiting mobility.",
         "cost": 1,
-        "effects": ["physical_resistance"],
+        "effects": ["physical_resilience"],
     },
     "bulwark": {
         "name": "Bulwark",
@@ -55,7 +55,7 @@ MANEUVERS = {
         "type": "defensive",
         "description": "Adopt a defensive stance, allowing your armour to effectively protect against damage",
         "cost": 1,
-        "effects": ["physical_resistance"],
+        "effects": ["physical_resilience"],
     },
     "channel": {
         "name": "Channel",
@@ -67,5 +67,13 @@ MANEUVERS = {
         "special": [
             {"action": "add_beads", "who": "self", "color": "blue", "permanence": "temporary", "count": 2}
         ],
-    }
+    },
+    "smite": {
+        "name": "Smite",
+        "group": "strike",
+        "type": "offensive",
+        "description": "Sacrifice accuracy for force. dealing extra damage this turn.",
+        "cost": 1,
+        "effects": ["damage"], 
+        }
 }   

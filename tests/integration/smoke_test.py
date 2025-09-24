@@ -72,7 +72,7 @@ def seed_demo_loadout(entity, enemy=False):
         to_replace -= 1
     entity.base_draw_count += 2
     entity.modify_bead_rule("blue", is_success=True, resource="mana")
-
+    entity.maneuver_groups.append("smite")
     entity.base_damage = 2 # if not enemy else 1
 
 def initial_draw_and_resources(actor, round_num, enemy):
@@ -312,6 +312,8 @@ def action_menu(player, enemy, spells):
         elif choice == '3':
             print_details(player)
             print_details(enemy)
+            print(f"Projected successes left: {player.expected_successes - player.spent_successes}")
+            print(f"Mana: {player.current_mana}")
 
         elif choice == '4':
             print(basic_attack(player, enemy))
